@@ -1,0 +1,63 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnInfo"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:text="@string/Información"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/black"
+        android:drawableStart="@drawable/informacion"
+        android:drawablePadding="8dp"
+        android:padding="16dp"
+        android:background="@drawable/custom_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnUbicacion"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:background="@drawable/custom_button"
+        android:drawableStart="@drawable/pinlocacion"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/inter_bold"
+        android:padding="16dp"
+        android:text="@string/Ubicación"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/btnHistorial"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnInfo" />
+
+    <Button
+        android:id="@+id/btnHistorial"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="118dp"
+        android:background="@drawable/custom_button"
+        android:drawableStart="@drawable/historial"
+        android:drawablePadding="8dp"
+        android:padding="16dp"
+        android:text="@string/Historial"
+        android:textColor="@color/black"
+        android:fontFamily="@font/inter_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

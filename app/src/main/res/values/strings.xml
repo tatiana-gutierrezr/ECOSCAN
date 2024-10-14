@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">EcoScan</string>
+    <string name="app_logo">EcoScan</string>
+    <string name="continuar_sin_cuenta"><u>Continuar sin acceder a una cuenta</u></string>
+    <string name="btnIniciarSesion">INICIAR SESIÓN</string>
+    <string name="btnCrearCuenta">CREAR CUENTA</string>
+    <string name="nombre">NOMBRE COMPLETO</string>
+    <string name="email">CORREO ELECTRÓNICO</string>
+    <string name="clave">CONTRASEÑA</string>
+    <string name="hintnombre">Nombre completo</string>
+    <string name="hintemail">Correo electrónico</string>
+    <string name="hintclave">Contraseña</string>
+    <string name="hintuser">Usuario</string>
+    <string name="user">USUARIO</string>
+    <string name="crearcuenta">CREA UNA CUENTA</string>
+    <string name="recuperarClave">RECUPERAR CONTRASEÑA</string>
+    <string name="Anonimo">Si quieres guardar tus resultados en el historial</string>
+    <string name="home">Inicio</string>
+    <string name="scan">Escanear</string>
+    <string name="profile">Perfil</string>
+    <string name="send">Enviar</string>
+    <string name="escaner">Enfoca el objeto y presiona el botón de escanear</string>
+    <string name="Historial">Consulta tu historial</string>
+    <string name="Ubicación">Conoce puntos de reciclaje en Bogotá</string>
+    <string name="Información">Aprende a reciclar según tu edad</string>
+    <string name="Info">Recibe consejos dependiendo de tu grupo etario</string>
+    <string name="perfilanonimo">¡Bienvenido! Si deseas acceder a todas las funcionalidades, puedes iniciar sesión o crear una cuenta</string>
+    <string name="recclave">Si olvidaste tu contraseña, ingresa tu nombre de usuario o el correo electrónico con el que te registraste para iniciar el proceso de recuperación. Enviaremos todos los detalles a tu correo.</string>
+    <string name="nocuenta">¿No tienes cuenta? Puedes</string>
+    <string name="continuar">continuar sin iniciar sesión</string>
+    <string name="crearc">crear una cuenta</string>
+    <string name="forpass">¿Olvidaste tu contraseña?</string>
+    <string name="inises">INICIA SESIÓN</string>
+    <string name="puntosrec">Puntos de reciclaje</string>
+    <string name="ciudades">*Aplica solo para Bogotá y Medellín</string>
+    <string name="dropdown">Selecciona una ciudad</string>
+    <string name="adolescente">Adolescentes</string>
+    <string name="menores">Menores</string>
+    <string name="adultos">Adultos</string>
+    <string-array name="cities_array">
+        <item>Bogotá</item>
+        <item>Medellín</item>
+        <!-- item>Barranquilla</item> -->
+    </string-array>
+    <string name="backbtn">Volver</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

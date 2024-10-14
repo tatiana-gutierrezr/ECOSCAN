@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme -->
+    <style name="Theme.EcoScan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary color (Blanco para botones y elementos primarios) -->
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimaryVariant">#E0E0E0</item> <!-- Una variante más oscura del blanco si es necesario -->
+        <item name="colorOnPrimary">#000000</item> <!-- Texto sobre fondo blanco -->
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">#70AB55</item>
+        <item name="colorSecondaryVariant">#558B2F</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <!-- Background and surface colors -->
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#000000</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">#70AB55</item>
+        <item name="android:navigationBarColor">#000000</item>
+    </style>
+
+    <!-- Define other custom styles if needed -->
+    <style name="App_Custom_Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/green</item>
+    </style>
+</resources>

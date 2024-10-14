@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Fondo transparente para que solo se vea el borde -->
+    <solid android:color="#00FFFFFF" />
+
+    <!-- Define el borde del cuadrado -->
+    <stroke
+        android:width="10dp"
+        android:color="@color/green"/> <!-- Color del borde -->
+</shape>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292417526619",
+    "project_id": "ecoscan-2024",
+    "storage_bucket": "ecoscan-2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292417526619:android:7586dfdb48d48f2ee4587e",
+        "android_client_info": {
+          "package_name": "com.example.ecoscan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyqu2OJ_yZ7woaJP8rCPZmpoQ58u5za3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

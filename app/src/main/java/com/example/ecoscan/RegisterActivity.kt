@@ -2,10 +2,10 @@ package com.example.ecoscan
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -17,6 +17,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var email: EditText
     private lateinit var passwrd: EditText
     private lateinit var btnCrearCuenta: Button
+    private lateinit var btnAtras: ImageButton
     private lateinit var database: FirebaseDatabase
     private lateinit var reference: DatabaseReference
 
@@ -24,14 +25,19 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Initialize views
         nombre = findViewById(R.id.fullnameInput)
         usr = findViewById(R.id.usernameInput)
         email = findViewById(R.id.emailInput)
         passwrd = findViewById(R.id.passwordInput)
         btnCrearCuenta = findViewById(R.id.btnCrearCuenta)
+        btnAtras = findViewById(R.id.backarrow)
+
         database = FirebaseDatabase.getInstance()
         reference = database.getReference("users")
+
+        btnAtras.setOnClickListener {
+            finish()
+        }
 
         btnCrearCuenta.setOnClickListener {
             registerUser()
@@ -44,25 +50,21 @@ class RegisterActivity : AppCompatActivity() {
         val emailInput = email.text.toString().trim()
         val password = passwrd.text.toString().trim()
 
-        // Validate inputs
+        // Validar entradas
         if (name.isEmpty() || username.isEmpty() || emailInput.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Optional: Validate email format and password strength
-
-        // Create a helper class instance
+        // Crear una instancia de la clase auxiliar
         val helperClass = HelperClass(name, emailInput, username, password)
 
-        // Store user information in the database
+        // Almacenar la información del usuario en la base de datos
         reference.child(username).setValue(helperClass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this, "¡Registro exitoso!", Toast.LENGTH_SHORT).show()
-                clearInputs()
-                val intent = Intent(this, Log::class.java)
-                startActivity(intent)
-                finish() // Optional: Finish this activity to prevent going back to it
+                clearInputs() // Limpiar los campos
+                // NO redirigir a otra actividad
             } else {
                 Toast.makeText(this, "El registro falló. Por favor vuelve a intentarlo.", Toast.LENGTH_SHORT).show()
             }

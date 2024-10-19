@@ -38,6 +38,7 @@ class HomeActivity : AppCompatActivity() {
         replaceFragment(HomeFragment())
     }
 
+
     // Función para verificar el estado del usuario y cargar el fragmento adecuado
     private fun checkUserStatusAndLoadProfileFragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser

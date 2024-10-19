@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "292417526619",
-    "project_id": "ecoscan-2024",
-    "storage_bucket": "ecoscan-2024.appspot.com"
+    "project_number": "167466901960",
+    "project_id": "ecoscan-tgr",
+    "storage_bucket": "ecoscan-tgr.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:292417526619:android:7586dfdb48d48f2ee4587e",
+        "mobilesdk_app_id": "1:167466901960:android:da28ab45a1c0e17cca60fd",
         "android_client_info": {
           "package_name": "com.example.ecoscan"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAyqu2OJ_yZ7woaJP8rCPZmpoQ58u5za3k"
+          "current_key": "AIzaSyCjf3IZzZuSv6qtlKSBUKO7gjcAdPb8d9k"
         }
       ],
       "services": {

@@ -6,62 +6,59 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Logo de la aplicación -->
     <ImageView
         android:id="@+id/logoImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="148dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:contentDescription="@string/app_logo"
         android:src="@drawable/logo"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@id/btnIniciarSesion"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" />
 
-    <!-- Botón de Iniciar Sesión -->
     <Button
         android:id="@+id/btnIniciarSesion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
         android:padding="16dp"
         android:text="@string/btnIniciarSesion"
         android:backgroundTint="@color/green"
         android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btnCrearCuenta"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logoImageView" />
 
-    <!-- Texto para continuar sin cuenta -->
-    <TextView
-        android:id="@+id/btnContinuarSinCuenta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textColor="#70AB55"
-        android:textSize="16sp"
-        android:text="@string/continuar_sin_cuenta"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnCrearCuenta" />
-
-    <!-- Botón de Crear Cuenta -->
     <Button
         android:id="@+id/btnCrearCuenta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:backgroundTint="@color/black"
         android:padding="16dp"
         android:text="@string/btnCrearCuenta"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnIniciarSesion" />
+        app:layout_constraintTop_toBottomOf="@id/btnIniciarSesion"
+        app:layout_constraintBottom_toTopOf="@+id/btnContinuarSinCuenta"/>
 
+    <TextView
+        android:id="@+id/btnContinuarSinCuenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/continuar_sin_cuenta"
+        android:textColor="#70AB55"
+        android:textSize="16sp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCrearCuenta" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

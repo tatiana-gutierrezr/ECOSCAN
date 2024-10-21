@@ -1,5 +1,6 @@
 package com.example.ecoscan
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -7,20 +8,17 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login) // Reemplaza con tu layout de login
+        setContentView(R.layout.activity_login)
 
-        // Inicializar Firebase Auth y Firestore
+        // Inicializar Firebase Auth
         auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
 
         val emailInput = findViewById<EditText>(R.id.emailInput)
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
@@ -32,8 +30,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btnIniciarSesion.setOnClickListener {
-            val email = emailInput.text.toString().trim() // Usar email directamente
-            val password = passwordInput.text.toString().trim()
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
 
             // Validación simple de los campos
             if (email.isEmpty() || password.isEmpty()) {
@@ -41,27 +39,21 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Verificar si el correo tiene un formato válido
-            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Por favor ingresa un correo electrónico válido", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
             // Autenticar usando Firebase Authentication con email y contraseña
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        // Inicio de sesión exitoso
+                        // Inicio de sesión exitoso, redirigir a HomeActivity
                         Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                        // Aquí puedes navegar a otra actividad si lo deseas
+
+                        // Redirigir a HomeActivity
+                        val intent = Intent(this, HomeActivity::class.java)
+                        startActivity(intent)
+                        finish() // Finalizar LoginActivity para que el usuario no pueda volver
                     } else {
                         // Error en la autenticación
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
-                }
-                .addOnFailureListener { exception ->
-                    // Error al autenticar
-                    Toast.makeText(this, "Error al iniciar sesión: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }

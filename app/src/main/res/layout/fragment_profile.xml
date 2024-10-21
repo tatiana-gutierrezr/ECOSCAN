@@ -7,72 +7,100 @@
     android:layout_height="match_parent"
     tools:context=".ProfileFragment">
 
-    <ImageView
-        android:id="@+id/profileImageView"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/profile"
-        android:layout_marginTop="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/fullNameTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.109"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="40dp"
+        app:shapeAppearanceOverlay="@style/circular"
+        android:padding="10dp"
+        app:strokeWidth="8dp"
+        app:strokeColor="@color/green"
+        android:background="@color/white"
+        android:layout_marginStart="30dp"
+        app:srcCompat="@drawable/profile_pic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/fullNameTextView"
+    <EditText
+        android:id="@+id/fullnameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Nombre completo"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/inter_bold"
+        android:hint="@string/hintnombre"
+        android:textColor="@color/black"
         android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/usernameTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profileImageView"
-        app:layout_constraintTop_toBottomOf="@+id/profileImageView" />
+        app:layout_constraintStart_toEndOf="@+id/ImageView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@android:color/holo_green_dark"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/logoutButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profileImageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:fontFamily="@font/inter_bold"
+        android:hint="@string/hintuser"
+        android:textColor="@color/green"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@+id/fullnameTextView"
+        app:layout_constraintTop_toBottomOf="@+id/fullnameTextView" />
 
     <Button
-        android:id="@+id/btnCantidad"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/Información"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="80dp"
+        android:id="@+id/btnProductos"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:fontFamily="@font/inter_bold"
-        android:textColor="@color/black"
-        android:drawableStart="@drawable/informacion"
-        android:drawablePadding="8dp"
-        android:padding="16dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/custom_button"
-        app:layout_constraintStart_toStartOf="parent"
+        android:drawableLeft="@drawable/ic_productos"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:padding="16dp"
+        android:text="@string/productos"
+        android:textColor="@color/black"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/btnHistorial"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ImageView" />
 
     <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="240dp"
+        android:id="@+id/btnHistorial"
+        android:layout_width="320dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/custom_button"
+        android:drawableLeft="@drawable/history"
+        android:drawablePadding="10dp"
+        android:textSize="15sp"
+        android:fontFamily="@font/inter_bold"
         android:padding="16dp"
-        android:text="Cerrar sesión"
+        android:text="@string/Historial"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/btnCerrarSesion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnProductos" />
+
+    <Button
+        android:id="@+id/btnCerrarSesion"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/green"
+        android:fontFamily="@font/inter_bold"
+        android:text="@string/cerrarsesion"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_marginBottom="88dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.646"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.8" />
+        app:layout_constraintTop_toBottomOf="@+id/btnHistorial" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

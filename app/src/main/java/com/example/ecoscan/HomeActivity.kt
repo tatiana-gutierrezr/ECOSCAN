@@ -45,7 +45,7 @@ class HomeActivity : AppCompatActivity() {
 
         if (currentUser != null && !currentUser.isAnonymous) {
             // Usuario autenticado, cargar el perfil con cuenta
-            replaceFragment(ProfileFragment()) // Fragmento con perfil completo (usuario autenticado)
+            replaceFragment(ProfileFragment())
         } else {
             // Usuario no autenticado o anónimo, cargar el perfil sin cuenta
             replaceFragment(AnonProfileFragment()) // Fragmento sin cuen

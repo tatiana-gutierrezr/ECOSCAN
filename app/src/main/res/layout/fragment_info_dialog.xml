@@ -15,10 +15,9 @@
         android:text="@string/info_message"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/overlay" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/okButton"

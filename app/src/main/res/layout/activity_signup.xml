@@ -8,19 +8,18 @@
     android:background="@android:color/white"
     tools:context=".LoginActivity">
 
-    <TextView
-        android:id="@+id/cctitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:fontFamily="@font/inter_bold"
-        android:text="@string/crearcuenta"
-        android:textAlignment="center"
-        android:textColor="#689F38"
-        android:textSize="24sp"
-        android:textStyle="bold"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="40dp"
+        app:shapeAppearanceOverlay="@style/circular"
+        android:padding="10dp"
+        app:strokeWidth="8dp"
+        app:strokeColor="@color/green"
+        android:background="@color/white"
+        app:srcCompat="@drawable/profile_pic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,13 +28,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginTop="35dp"
         android:backgroundTint="@color/white"
-        android:contentDescription="@string/backbtn"
         android:src="@drawable/flecha_atras"
-        app:layout_constraintBottom_toTopOf="@+id/cctitle"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="ImageContrastCheck,TouchTargetSizeCheck" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/nameLabel"
@@ -48,7 +45,7 @@
         android:textColor="#689F38"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cctitle" />
+        app:layout_constraintTop_toBottomOf="@+id/ImageView" />
 
     <EditText
         android:id="@+id/fullnameInput"
@@ -159,5 +156,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput"
         tools:ignore="TextContrastCheck" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/ImageView"
+        app:layout_constraintEnd_toEndOf="@+id/ImageView"
+        app:srcCompat="@drawable/ic_camera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

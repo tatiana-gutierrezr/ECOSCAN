@@ -4,89 +4,65 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var email: EditText
-    private lateinit var passwrd: EditText
-    private lateinit var btnIniciarSesion: Button
-    private lateinit var btnAtras: ImageButton
-    private lateinit var btnClave: TextView
-    private lateinit var database: FirebaseDatabase
-    private lateinit var reference: DatabaseReference
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_login) // Reemplaza con tu layout de login
 
-        email = findViewById(R.id.emailInput)
-        passwrd = findViewById(R.id.passwordInput)
-        btnIniciarSesion = findViewById(R.id.btnIniciarSesion)
-        btnAtras= findViewById(R.id.backarrow)
-        btnClave = findViewById(R.id.forgotPassword)
-        database = FirebaseDatabase.getInstance()
-        reference = database.getReference("users")
+        // Inicializar Firebase Auth y Firestore
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
-        btnAtras.setOnClickListener{
+        val emailInput = findViewById<EditText>(R.id.emailInput)
+        val passwordInput = findViewById<EditText>(R.id.passwordInput)
+        val btnIniciarSesion = findViewById<Button>(R.id.btnIniciarSesion)
+        val btnAtras = findViewById<ImageButton>(R.id.backarrow)
+
+        btnAtras.setOnClickListener {
             finish()
         }
 
-        btnClave.setOnClickListener {
-
-        }
-
         btnIniciarSesion.setOnClickListener {
-            if (validateUsername() && validatePassword()) {
-                loginUser()
+            val email = emailInput.text.toString().trim() // Usar email directamente
+            val password = passwordInput.text.toString().trim()
+
+            // Validación simple de los campos
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-        }
-    }
 
-    private fun validateUsername(): Boolean {
-        val emailText = email.text.toString().trim()
-        return if (emailText.isEmpty()) {
-            Toast.makeText(this, "Username cannot be empty", Toast.LENGTH_SHORT).show()
-            false
-        } else {
-            true
-        }
-    }
+            // Verificar si el correo tiene un formato válido
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Por favor ingresa un correo electrónico válido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-    private fun validatePassword(): Boolean {
-        val passwordText = passwrd.text.toString().trim()
-        return if (passwordText.isEmpty()) {
-            Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show()
-            false
-        } else {
-            true
-        }
-    }
-
-    private fun loginUser() {
-        val emailText = email.text.toString().trim()
-        val passwordText = passwrd.text.toString().trim()
-
-        reference.child(emailText).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val userData = task.result
-                if (userData.exists()) {
-                    val storedPassword = userData.child("password").value.toString()
-                    if (storedPassword == passwordText) {
-                        Toast.makeText(this, "¡Inicio de sesión correcto!", Toast.LENGTH_SHORT).show()
+            // Autenticar usando Firebase Authentication con email y contraseña
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Inicio de sesión exitoso
+                        Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                        // Aquí puedes navegar a otra actividad si lo deseas
                     } else {
-                        Toast.makeText(this,"Contraseña incorrecta", Toast.LENGTH_SHORT).show()
+                        // Error en la autenticación
+                        Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(this, "El usuario no existe", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Error al recuperar los datos", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener { exception ->
+                    // Error al autenticar
+                    Toast.makeText(this, "Error al iniciar sesión: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

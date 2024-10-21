@@ -46,6 +46,10 @@ class ScanFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_scan, container, false)
 
+        // Mostrar el diálogo informativo al cargar la pestaña de escaneo
+        val infoDialog = ScanDialogFragment()
+        infoDialog.show(parentFragmentManager, "InfoDialog")
+
         previewView = view.findViewById(R.id.previewView)
 
         // Verificar y solicitar permisos de cámara

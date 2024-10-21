@@ -47,5 +47,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="info_message">En el mapa se encuentran las ubicaciones de Ecobot, donde se pueden depositar envases plásticos, latas, botellas llenas y Tetra Paks. Estas máquinas están diseñadas para facilitar el reciclaje y promover prácticas sostenibles.</string>
     <string name="ok_button">OK</string>
+    <string name="scan_dialog">Recuerda que los envases deben estar limpios antes de botarlos en los contenedores de reciclaje.</string>
 
 </resources>

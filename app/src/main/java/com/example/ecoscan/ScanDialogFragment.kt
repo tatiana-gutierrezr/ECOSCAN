@@ -1,21 +1,35 @@
 package com.example.ecoscan
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import com.example.ecoscan.R
 
-class StartGameDialogFragment : DialogFragment() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = AlertDialog.Builder(it)
-            builder.setMessage("En el mapa se encuentran las ubicaciones de Ecobot, donde se pueden depositar envases plásticos, latas, botellas llenas y Tetra Paks. Estas máquinas están diseñadas para facilitar el reciclaje y promover prácticas sostenibles.")
-                .setPositiveButton("OK") { dialog, id ->
-                    // Cerrar el diálogo.
-                    dialog.dismiss()
-                }
-            // Crear y retornar el AlertDialog.
-            builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+class ScanDialogFragment : DialogFragment() {
+
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+            val view = inflater.inflate(R.layout.fragment_info_dialog, container, false)
+
+            val infoTextView = view.findViewById<TextView>(R.id.infoTextView)
+            val okButton = view.findViewById<Button>(R.id.okButton)
+
+            // Set the text for the info dialog
+            infoTextView.text = getString(R.string.scan_dialog)
+
+            // Close the dialog when OK button is clicked
+            okButton.setOnClickListener {
+            dismiss()
     }
+
+    return view
+    }
+
 }

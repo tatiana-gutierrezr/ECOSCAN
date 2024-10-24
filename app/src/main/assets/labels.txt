@@ -1,0 +1,9 @@
+0 Vacio
+1 Persona
+2 Vidrio
+3 Plastico
+4 Papel
+5 Carton
+6 Aluminio
+7 Basura
+8 Organico

@@ -85,6 +85,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         btnInfo.setOnClickListener {
             val infoDialog = InfoDialogFragment()
+            infoDialog.isCancelable = false  // Esto asegura que no se cierre al tocar fuera del diálogo
             infoDialog.show(childFragmentManager, "InfoDialog")
         }
 
@@ -113,15 +114,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun mostrarCiudadEnMapa(ciudad: String) {
-        // Definimos la posición de la ciudad seleccionada
         val latLng: LatLng = when (ciudad) {
             "Bogotá" -> LatLng(4.60971, -74.08175)
             "Medellín" -> LatLng(6.25184, -75.56359)
-            else -> LatLng(4.570868, -74.297333)  // Posición por defecto si no se selecciona una ciudad conocida
+            else -> LatLng(4.570868, -74.297333)  // Posición por defecto
         }
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
-        googleMap.clear()  // Limpiamos los marcadores actuales
+        googleMap.clear()
         agregarMarcadoresDesdeFirestore(ciudad)  // Cargamos los puntos correspondientes a la ciudad seleccionada
     }
 
@@ -137,7 +137,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         val title = field.key
                         val value = field.value
 
-                        // Verificamos si el valor es un GeoPoint
                         if (value is com.google.firebase.firestore.GeoPoint) {
                             val latLng = LatLng(value.latitude, value.longitude)
                             googleMap.addMarker(
@@ -157,21 +156,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }
     }
 
-    // Método para verificar si la ubicación está activada en el dispositivo
     private fun isLocationEnabled(): Boolean {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    // Método para mostrar un diálogo si la ubicación está desactivada
     private fun mostrarDialogoUbicacionDesactivada() {
         val builder = android.app.AlertDialog.Builder(requireContext())
         builder.setMessage("No tienes activada la ubicación. Por favor, actívala para encontrar el ecobot más cercano.")
+            .setCancelable(false)
             .setPositiveButton("OK", null)
             .show()
     }
 
-    // Método para obtener la ubicación actual y buscar el marcador más cercano
     @SuppressLint("MissingPermission")
     private fun obtenerUbicacionYBuscarEcobotMasCercano() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -184,53 +181,66 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    // Método para buscar el marcador más cercano a la ubicación actual
     private fun buscarMarcadorMasCercano(ubicacionActual: LatLng) {
-        firestore.collection("cities").get()
-            .addOnSuccessListener { documents ->
-                var marcadorMasCercano: LatLng? = null
-                var menorDistancia = Double.MAX_VALUE
-                var nombreEcobotMasCercano: String? = null
+        val radioInicialKm = 1.0
+        val incrementoRadioKm = 1.0
+        val radioMaximoKm = 50.0
 
-                for (document in documents) {
-                    for (field in document.data.entries) {
-                        val title = field.key
-                        val value = field.value
+        var radioBusqueda = radioInicialKm
+        var marcadorEncontrado: LatLng? = null
+        var nombreEcobotMasCercano: String? = null
 
-                        if (value is com.google.firebase.firestore.GeoPoint) {
-                            val latLng = LatLng(value.latitude, value.longitude)
-                            val distancia = calcularDistancia(ubicacionActual, latLng)
+        fun buscarConRadioActual() {
+            firestore.collection("cities").get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        for (field in document.data.entries) {
+                            val title = field.key
+                            val value = field.value
 
-                            if (distancia < menorDistancia) {
-                                menorDistancia = distancia
-                                marcadorMasCercano = latLng
-                                nombreEcobotMasCercano = title
+                            if (value is com.google.firebase.firestore.GeoPoint) {
+                                val latLng = LatLng(value.latitude, value.longitude)
+                                val distancia = calcularDistancia(ubicacionActual, latLng)
+
+                                if (distancia <= radioBusqueda) {
+                                    marcadorEncontrado = latLng
+                                    nombreEcobotMasCercano = title
+                                    break
+                                }
                             }
                         }
                     }
-                }
 
-                if (marcadorMasCercano != null && nombreEcobotMasCercano != null) {
-                    mostrarDialogoEcobotMasCercano(nombreEcobotMasCercano)
-                } else {
-                    Log.e("MapsFragment", "No se encontraron marcadores cercanos")
+                    if (marcadorEncontrado != null && nombreEcobotMasCercano != null) {
+                        Log.d("MapsFragment", "Ecobot más cercano encontrado: $nombreEcobotMasCercano")
+                        mostrarDialogoEcobotMasCercano(nombreEcobotMasCercano!!)
+                    } else if (radioBusqueda < radioMaximoKm) {
+                        radioBusqueda += incrementoRadioKm
+                        buscarConRadioActual()
+                    } else {
+                        Log.e("MapsFragment", "No se encontraron marcadores cercanos dentro del radio máximo")
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("MapsFragment", "Error obteniendo los datos de Firestore", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.e("MapsFragment", "Error obteniendo los datos de Firestore", exception)
+                }
+        }
+
+        buscarConRadioActual()
     }
 
-    // Método para mostrar el diálogo con el ecobot más cercano
     private fun mostrarDialogoEcobotMasCercano(nombreEcobot: String) {
         val dialogMessage = "El ecobot más cercano a tu ubicación actual se encuentra en $nombreEcobot"
+
         val builder = android.app.AlertDialog.Builder(requireContext())
         builder.setMessage(dialogMessage)
-            .setPositiveButton("OK", null)
+            .setCancelable(false)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
             .show()
     }
 
-    // Método para calcular la distancia entre dos LatLng usando la fórmula de Haversine
     private fun calcularDistancia(latLng1: LatLng, latLng2: LatLng): Double {
         val earthRadiusKm = 6371.0
 

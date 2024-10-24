@@ -70,4 +70,17 @@
         app:layout_constraintStart_toEndOf="@id/Escanear"
         app:layout_constraintTop_toBottomOf="@id/previewView" />
 
+    <ImageButton
+        android:id="@+id/galleryButton"
+        android:layout_width="42dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="@color/green"
+        android:src="@drawable/ic_upload"
+        app:layout_constraintEnd_toStartOf="@+id/switchCameraButton"
+        app:layout_constraintStart_toEndOf="@+id/Escanear"
+        app:layout_constraintTop_toBottomOf="@id/previewView" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

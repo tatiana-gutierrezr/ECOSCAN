@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val btnIniciarSesion = findViewById<Button>(R.id.btnIniciarSesion)
         val btnAtras = findViewById<ImageButton>(R.id.backarrow)
+        val forgotPassword = findViewById<TextView>(R.id.forgotPassword)
 
         btnAtras.setOnClickListener {
             finish()
@@ -55,6 +57,12 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
+        }
+        // Configurar el evento click para el TextView de olvidar contraseña
+        forgotPassword.setOnClickListener {
+            // Abre la actividad de recuperación de contraseña
+            val intent = Intent(this, ForgotPassActivity::class.java)
+            startActivity(intent)
         }
     }
 }

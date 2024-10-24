@@ -18,6 +18,7 @@
     <string name="home">Inicio</string>
     <string name="scan">Escanear</string>
     <string name="profile">Perfil</string>
+    <string name="ttlh">HISTORIAL</string>
     <string name="send">Enviar</string>
     <string name="escaner">Enfoca el objeto y presiona el botón de escanear</string>
     <string name="Historial">Consulta tu historial</string>
@@ -25,7 +26,7 @@
     <string name="Información">Aprende a reciclar según tu edad</string>
     <string name="Info">Recibe consejos dependiendo de tu grupo etario</string>
     <string name="perfilanonimo">¡Bienvenido! Si deseas acceder a todas las funcionalidades, puedes iniciar sesión o crear una cuenta</string>
-    <string name="recclave">Si olvidaste tu contraseña, ingresa tu nombre de usuario o el correo electrónico con el que te registraste para iniciar el proceso de recuperación. Enviaremos todos los detalles a tu correo.</string>
+    <string name="recclave">Si olvidaste tu contraseña, ingresa el correo electrónico con el que te registraste para iniciar el proceso de recuperación. Enviaremos todos los detalles a tu correo.</string>
     <string name="nocuenta">¿No tienes cuenta? Puedes</string>
     <string name="continuar">continuar sin iniciar sesión</string>
     <string name="crearc">crear una cuenta</string>
@@ -49,6 +50,7 @@
     <string name="ok_button">OK</string>
     <string name="cerrarsesion">CERRAR SESIÓN</string>
     <string name="productos">Mis productos escaneados</string>
+    <string name="titulo_productos">Productos escaneados</string>
     <string name="scan_dialog">Recuerda que los envases deben estar limpios antes de botarlos en los contenedores de reciclaje.</string>
 
 </resources>

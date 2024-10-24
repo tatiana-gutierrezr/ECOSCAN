@@ -12,12 +12,13 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="40dp"
+        android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/circular"
         android:padding="10dp"
         app:strokeWidth="8dp"
         app:strokeColor="@color/green"
         android:background="@color/white"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="20dp"
         app:srcCompat="@drawable/profile_pic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,8 +28,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:layout_marginRight="40dp"
         android:fontFamily="@font/inter_bold"
         android:hint="@string/hintnombre"
+        android:maxWidth="200dp"
+        android:minHeight="48dp"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,10 +45,22 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
         android:hint="@string/hintuser"
+        android:minHeight="48dp"
         android:textColor="@color/green"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="@+id/fullnameTextView"
         app:layout_constraintTop_toBottomOf="@+id/fullnameTextView" />
+
+    <ImageButton
+        android:id="@+id/editName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42dp"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/edit_name"
+        app:layout_constraintStart_toEndOf="@+id/fullnameTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <Button
         android:id="@+id/btnProductos"

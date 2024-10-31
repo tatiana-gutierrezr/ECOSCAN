@@ -1,344 +1,175 @@
 package com.example.ecoscan
 
-import android.Manifest
-import android.app.AlertDialog
-import android.content.pm.PackageManager
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.graphics.Rect
-import android.graphics.YuvImage
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.graphics.ImageDecoder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
+import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.ecoscan.com.example.ecoscan.Classifier
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import org.tensorflow.lite.support.image.ImageProcessor
-import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
-import java.io.ByteArrayOutputStream
-import java.util.UUID
-import com.example.ecoscan.databinding.FragmentScanBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.ecoscan.ml.Model
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class ScanFragment : Fragment() {
-    private var _binding: FragmentScanBinding? = null
-    private val binding get() = _binding!!
 
-    private lateinit var cameraProvider: ProcessCameraProvider
-    private var camera: Camera? = null
-    private var preview: Preview? = null
-    private var imageCapture: ImageCapture? = null
-    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-    private val labels = listOf(
-        "Vacio", "Persona", "Vidrio", "Plastico", "Papel",
-        "Carton", "Aluminio", "Basura", "Organico"
-    )
-
-    private val classifier by lazy {
-        Classifier(requireContext(), "model.tflite")
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            startCamera()
-        } else {
-            Toast.makeText(context, "Se requieren permisos de cámara", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private val pickImage = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let { processImageFromGallery(it) }
-    }
+    private lateinit var previewView: PreviewView
+    private lateinit var imageCapture: ImageCapture
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var model: Model
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentScanBinding.inflate(inflater, container, false)
-        return binding.root
+        val view: View = inflater.inflate(R.layout.fragment_scan, container, false)
+        previewView = view.findViewById(R.id.previewView)
+        val scanButton: Button = view.findViewById(R.id.Escanear)
+        val switchCameraButton: ImageButton = view.findViewById(R.id.switchCameraButton)
+        val galleryButton: ImageButton = view.findViewById(R.id.galleryButton)
+
+        scanButton.setOnClickListener { takePhoto() }
+        switchCameraButton.setOnClickListener { switchCamera() }
+        galleryButton.setOnClickListener { openGallery() }
+
+        model = Model.newInstance(requireContext())
+        cameraExecutor = Executors.newSingleThreadExecutor()
+
+        startCamera()
+
+        return view
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }
-
-        binding.apply {
-            Escanear.setOnClickListener { takePhoto() }
-            switchCameraButton.setOnClickListener { switchCamera() }
-            galleryButton.setOnClickListener { openGallery() }
-        }
-    }
-
-    private fun allPermissionsGranted() = ContextCompat.checkSelfPermission(
-        requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
-            bindCameraUseCases()
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val preview = androidx.camera.core.Preview.Builder().build().also {
+                it.setSurfaceProvider(previewView.surfaceProvider)
+            }
+
+            imageCapture = ImageCapture.Builder().build()
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+            } catch (exc: Exception) {
+                Toast.makeText(requireContext(), "Error al iniciar la cámara: ${exc.message}", Toast.LENGTH_SHORT).show()
+            }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    private fun bindCameraUseCases() {
-        val rotation = binding.previewView.display.rotation
-
-        preview = Preview.Builder()
-            .setTargetRotation(rotation)
-            .build()
-
-        imageCapture = ImageCapture.Builder()
-            .setTargetRotation(rotation)
-            .build()
-
-        try {
-            cameraProvider.unbindAll()
-            camera = cameraProvider.bindToLifecycle(
-                viewLifecycleOwner,
-                cameraSelector,
-                preview,
-                imageCapture
-            )
-            preview?.setSurfaceProvider(binding.previewView.surfaceProvider)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error al vincular casos de uso de cámara", e)
-        }
-    }
-
     private fun takePhoto() {
-        val imageCapture = imageCapture ?: return
+        val photoFile = File(
+            requireContext().externalMediaDirs.firstOrNull(),
+            "${System.currentTimeMillis()}.jpg"
+        )
+
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(
-            ContextCompat.getMainExecutor(requireContext()),
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    processImageProxy(image)
-                    image.close()
+            outputOptions, ContextCompat.getMainExecutor(requireContext()),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    Toast.makeText(requireContext(), "Error al tomar la foto: ${exc.message}", Toast.LENGTH_SHORT).show()
                 }
 
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Error al capturar foto", exception)
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val savedUri = Uri.fromFile(photoFile)
+                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                    classifyImage(bitmap)
                 }
             }
         )
-    }
-
-    private fun processImageProxy(imageProxy: ImageProxy) {
-        val bitmap = imageProxy.toBitmap()
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-
-        // Analizar con TFLite
-        val result = classifyImage(resizedBitmap)
-
-        // Subir a Firebase Storage
-        uploadToFirebase(resizedBitmap) { downloadUrl ->
-            // Mostrar resultado en un dialog
-            showResultDialog(result, downloadUrl)
-        }
-    }
-
-    private fun processImageFromGallery(uri: Uri) {
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val source = ImageDecoder.createSource(requireContext().contentResolver, uri)
-            ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, true) // Convertir a ARGB_8888
-        } else {
-            MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri).copy(Bitmap.Config.ARGB_8888, true) // Convertir a ARGB_8888
-        }
-
-        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-        val result = classifyImage(resizedBitmap)
-
-        // Aquí llamamos a uploadToFirebase solo con los dos argumentos requeridos
-        uploadToFirebase(resizedBitmap) { downloadUrl ->
-            showResultDialog(result, downloadUrl)
-            // Guardar el resultado en Firestore después de obtener el downloadUrl
-            val username = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
-            saveAnalysisResult(username, result, downloadUrl)
-        }
     }
 
     private fun switchCamera() {
-        cameraSelector = if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-            CameraSelector.DEFAULT_FRONT_CAMERA
-        } else {
-            CameraSelector.DEFAULT_BACK_CAMERA
-        }
-        bindCameraUseCases()
+        // Implementar lógica para cambiar entre cámara frontal y trasera
     }
 
     private fun openGallery() {
-        pickImage.launch("image/*")
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_GALLERY)
     }
 
-    private fun classifyImage(bitmap: Bitmap): String {
-        val imageProcessor = ImageProcessor.Builder()
-            .add(ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR))
-            .build()
-
-        var tensorImage = TensorImage.fromBitmap(bitmap)
-        tensorImage = imageProcessor.process(tensorImage)
-
-        val results = classifier.classify(tensorImage)
-        val maxResult = results.maxByOrNull { it.score }
-
-        return when (maxResult?.index) {
-            in 2..6 -> "Residuo aprovechable - Contenedor blanco"
-            7 -> "Residuo no aprovechable - Contenedor negro"
-            8 -> "Residuo orgánico aprovechable - Contenedor verde"
-            else -> "Lo sentimos, la imagen no pudo ser analizada. Por favor vuelva a intentarlo"
-        }.also {
-            Log.d(TAG, "Clasificación: ${maxResult?.index}, Resultado: $it")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK) {
+            val imageUri: Uri? = data?.data
+            imageUri?.let {
+                val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
+                classifyImage(bitmap)
+            }
         }
     }
 
-    private fun uploadToFirebase(bitmap: Bitmap, onComplete: (String) -> Unit) {
-        val storage = Firebase.storage
-        val storageRef = storage.reference
+    private fun classifyImage(bitmap: Bitmap) {
+        // Redimensionar el bitmap a 224x224
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
+        val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-        // Obtén el usuario autenticado
-        val user = FirebaseAuth.getInstance().currentUser
+        // Crear un TensorBuffer con la forma correcta
+        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.UINT8)
+        inputFeature0.loadBuffer(byteBuffer)
 
-        // Usa el uid como nombre de carpeta si displayName es nulo
-        val userFolder = user?.displayName ?: user?.uid ?: "Anonymous"
+        val outputs = model.process(inputFeature0)
+        val outputFeature0 = outputs.outputFeature0AsTensorBuffer
 
-        // Ruta base para las imágenes analizadas
-        val baseRef = storageRef.child("Analized_images/$userFolder")
+        val confidences = outputFeature0.floatArray
+        val maxIndex = confidences.indices.maxByOrNull { confidences[it] } ?: -1
 
-        // Crea la referencia de la imagen con un ID único
-        val imageRef = baseRef.child("${UUID.randomUUID()}.jpg")
+        val labels = arrayOf("Vacio", "Persona", "Vidrio", "Plastico", "Papel", "Carton", "Aluminio", "Basura", "Organico")
+        val result = labels[maxIndex]
 
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-
-        imageRef.putBytes(data)
-            .addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onComplete(uri.toString())
-                }
-            }
-            .addOnFailureListener {
-                showResultDialog("Error al subir la imagen", null)
-            }
-
-        Log.d(TAG, "Usuario autenticado: ${user?.displayName ?: "Ninguno"}")
-        Log.d(TAG, "Carpeta de usuario: $userFolder")
+        Toast.makeText(requireContext(), "Resultado: $result", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showResultDialog(result: String, downloadUrl: String?) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_result, null)
+    private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
+        // Crear un ByteBuffer del tamaño correcto
+        val byteBuffer = ByteBuffer.allocateDirect(224 * 224 * 3)
+        byteBuffer.order(ByteOrder.nativeOrder())
 
-        val resultText = dialogView.findViewById<TextView>(R.id.resultText)
-        val messageText = dialogView.findViewById<TextView>(R.id.messageText)
-        val okButton = dialogView.findViewById<Button>(R.id.okButton)
+        val intValues = IntArray(224 * 224)
+        bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        // Actualizar el texto del resultado según la clasificación
-        resultText.text = result
-
-        // Aquí puedes incluir el URL de la imagen subida si es necesario
-        if (downloadUrl != null) {
-            messageText.text = "Imagen subida exitosamente a Firebase Storage\nURL: $downloadUrl"
-        } else {
-            messageText.text = "El análisis de la imagen resultó en: $result"
+        var pixel = 0
+        for (i in 0 until 224) {
+            for (j in 0 until 224) {
+                val value = intValues[pixel++]
+                byteBuffer.put((value shr 16 and 0xFF).toByte()) // Rojo
+                byteBuffer.put((value shr 8 and 0xFF).toByte())  // Verde
+                byteBuffer.put((value and 0xFF).toByte())        // Azul
+            }
         }
-
-        // Crear el AlertDialog con el diseño personalizado
-        val dialog = AlertDialog.Builder(requireContext())
-            .setCancelable(false)
-            .setView(dialogView)
-            .create()
-
-        // Acciones del botón OK
-        okButton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+        return byteBuffer
     }
 
-
-    private fun saveAnalysisResult(username: String, result: String, imageUrl: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        val analysisData = hashMapOf(
-            "result" to result,
-            "imageUrl" to imageUrl,
-            "timestamp" to System.currentTimeMillis()
-        )
-
-        firestore.collection("analysis_results")
-            .document(username)
-            .collection("results")
-            .add(analysisData)
-            .addOnSuccessListener {
-                Log.d(TAG, "Resultado guardado correctamente en Firestore")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error al guardar resultado en Firestore", e)
-            }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onDestroy() {
+        super.onDestroy()
+        model.close()
+        cameraExecutor.shutdown()
     }
 
     companion object {
-        private const val TAG = "ScanFragment"
+        private const val REQUEST_GALLERY = 1
     }
-}
-
-// Extension function para convertir ImageProxy a Bitmap
-fun ImageProxy.toBitmap(): Bitmap {
-    val yBuffer = planes[0].buffer
-    val uBuffer = planes[1].buffer
-    val vBuffer = planes[2].buffer
-
-    val ySize = yBuffer.remaining()
-    val uSize = uBuffer.remaining()
-    val vSize = vBuffer.remaining()
-
-    val nv21 = ByteArray(ySize + uSize + vSize)
-
-    yBuffer.get(nv21, 0, ySize)
-    vBuffer.get(nv21, ySize, vSize)
-    uBuffer.get(nv21, ySize + vSize, uSize)
-
-    val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
-    val out = ByteArrayOutputStream()
-    yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
-    val imageBytes = out.toByteArray()
-    return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 }

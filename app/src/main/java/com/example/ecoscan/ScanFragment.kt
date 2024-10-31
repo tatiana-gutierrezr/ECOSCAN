@@ -1,7 +1,9 @@
 package com.example.ecoscan
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -14,14 +16,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog // Importar AlertDialog
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.ecoscan.ml.Model
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
@@ -30,12 +39,19 @@ import java.nio.ByteOrder
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+@Suppress("DEPRECATION")
 class ScanFragment : Fragment() {
 
     private lateinit var previewView: PreviewView
     private lateinit var imageCapture: ImageCapture
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var model: Model
+    private var isUsingFrontCamera = false
+    private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
+
+    companion object {
+        private const val REQUEST_CAMERA_PERMISSION = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,9 +70,34 @@ class ScanFragment : Fragment() {
         model = Model.newInstance(requireContext())
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        startCamera()
+        // Revisar permisos antes de iniciar la cámara
+        checkPermissions()
+
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri: Uri? = result.data?.data
+                imageUri?.let {
+                    val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
+                    classifyImage(bitmap, File(it.path!!))
+                }
+            }
+        }
 
         return view
+    }
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_CAMERA_PERMISSION
+            )
+        } else {
+            startCamera()
+        }
     }
 
     private fun startCamera() {
@@ -68,11 +109,16 @@ class ScanFragment : Fragment() {
             }
 
             imageCapture = ImageCapture.Builder().build()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = if (isUsingFrontCamera) {
+                CameraSelector.DEFAULT_FRONT_CAMERA
+            } else {
+                CameraSelector.DEFAULT_BACK_CAMERA
+            }
 
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+                Log.d("ScanFragment", "Cámara iniciada correctamente")
             } catch (exc: Exception) {
                 Toast.makeText(requireContext(), "Error al iniciar la cámara: ${exc.message}", Toast.LENGTH_SHORT).show()
             }
@@ -95,66 +141,103 @@ class ScanFragment : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
                     val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                    classifyImage(bitmap)
+                    classifyImage(bitmap, photoFile)
                 }
             }
         )
     }
 
-    private fun switchCamera() {
-        // Implementar lógica para cambiar entre cámara frontal y trasera
-    }
-
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_GALLERY)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
-            imageUri?.let {
-                val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, it)
-                classifyImage(bitmap)
-            }
-        }
-    }
-
-    private fun classifyImage(bitmap: Bitmap) {
-        // Redimensionar el bitmap a 224x224
+    private fun classifyImage(bitmap: Bitmap, photoFile: File) {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
         val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-        // Crear un TensorBuffer con la forma correcta y tipo de datos UINT8
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.UINT8)
         inputFeature0.loadBuffer(byteBuffer)
 
-        // Procesar la imagen con el modelo
         val outputs = model.process(inputFeature0)
         val outputFeature0 = outputs.outputFeature0AsTensorBuffer
 
-        // Obtener las confidencias de las salidas del modelo
         val confidences = outputFeature0.floatArray
         val maxIndex = confidences.indices.maxByOrNull { confidences[it] } ?: -1
 
-        // Definir las etiquetas
         val labels = arrayOf("Vacio", "Persona", "Vidrio", "Plastico", "Papel", "Carton", "Aluminio", "Basura", "Organico")
         val result = labels[maxIndex]
 
-        // Log para depuración
         Log.d("ClassifyImage", "Confidences: ${confidences.joinToString()}")
         Log.d("ClassifyImage", "Max Index: $maxIndex")
         Log.d("ClassifyImage", "Result: $result")
 
-        // Mostrar el resultado
-        Toast.makeText(requireContext(), "Resultado: $result", Toast.LENGTH_SHORT).show()
+        // Mostrar el diálogo con el resultado
+        showResultDialog(result)
+
+        val timestamp = System.currentTimeMillis()
+        uploadImageToFirebase(photoFile, result, timestamp)
+    }
+
+    private fun showResultDialog(result: String) { // Nuevo método para mostrar el resultado
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Resultado de clasificación")
+        builder.setMessage("El objeto clasificado es: $result")
+        builder.setPositiveButton("Aceptar") { dialog, _ -> dialog.dismiss() }
+
+        // Mostrar el diálogo
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun uploadImageToFirebase(photoFile: File, result: String, timestamp: Long) {
+        // Obtener el ID del usuario autenticado
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        // Obtener el nombre de usuario o usar "Anonymous" si no está autenticado
+        val username = FirebaseAuth.getInstance().currentUser?.displayName ?: "Anonymous"
+
+        // Definir el nombre de la carpeta en función de si el usuario está autenticado o no
+        val userFolder = if (userId != null) {
+            username // Carpeta con el nombre de usuario si está autenticado
+        } else {
+            "Anonymous" // Carpeta "Anonymous" si no está autenticado
+        }
+
+        // Crear referencia en Firebase Storage
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("Analyzed images/$userFolder/${photoFile.name}")
+
+        val uploadTask = imageRef.putFile(Uri.fromFile(photoFile))
+        uploadTask.addOnSuccessListener {
+            saveResultToDatabase(result, timestamp, username)
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Error al subir la imagen: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveResultToDatabase(result: String, timestamp: Long, username: String?) {
+        val databaseRef = FirebaseDatabase.getInstance().reference
+        val resultData = hashMapOf(
+            "result" to result,
+            "timestamp" to timestamp
+        )
+
+        databaseRef.child("Analyzed images").child(username ?: "Anonymous").child(timestamp.toString()).setValue(resultData)
+            .addOnSuccessListener {
+                Log.d("Database", "Resultado guardado exitosamente")
+            }
+            .addOnFailureListener {
+                Log.e("Database", "Error al guardar resultado: ${it.message}")
+            }
+    }
+
+    private fun switchCamera() {
+        isUsingFrontCamera = !isUsingFrontCamera
+        startCamera()
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryLauncher.launch(intent)
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        // Crear un ByteBuffer del tamaño correcto para UINT8
         val byteBuffer = ByteBuffer.allocateDirect(224 * 224 * 3)
         byteBuffer.order(ByteOrder.nativeOrder())
 
@@ -165,14 +248,11 @@ class ScanFragment : Fragment() {
         for (i in 0 until 224) {
             for (j in 0 until 224) {
                 val value = intValues[pixel++]
-                byteBuffer.put((value shr 16 and 0xFF).toByte()) // Rojo
-                byteBuffer.put((value shr 8 and 0xFF).toByte())  // Verde
-                byteBuffer.put((value and 0xFF).toByte())        // Azul
+                byteBuffer.put((value shr 16 and 0xFF).toByte())
+                byteBuffer.put((value shr 8 and 0xFF).toByte())
+                byteBuffer.put((value and 0xFF).toByte())
             }
         }
-
-        // Log para depuración
-        Log.d("ConvertBitmap", "ByteBuffer: ${byteBuffer.array().joinToString()}")
 
         return byteBuffer
     }
@@ -181,9 +261,5 @@ class ScanFragment : Fragment() {
         super.onDestroy()
         model.close()
         cameraExecutor.shutdown()
-    }
-
-    companion object {
-        private const val REQUEST_GALLERY = 1
     }
 }

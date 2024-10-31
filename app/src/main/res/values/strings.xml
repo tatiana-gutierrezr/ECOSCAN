@@ -35,9 +35,9 @@
     <string name="puntosrec">Puntos de reciclaje</string>
     <string name="ciudades">*Aplica solo para Bogotá y Medellín</string>
     <string name="dropdown">Selecciona una ciudad</string>
-    <string name="adolescente">Adolescentes</string>
-    <string name="menores">Menores</string>
-    <string name="adultos">Adultos</string>
+    <string name="adolescente">Adolescentes (13 - 18 años)</string>
+    <string name="menores">Niños (0 - 12 años)</string>
+    <string name="adultos">Adultos (18+ años)</string>
     <string-array name="cities_array">
         <item>Bogotá</item>
         <item>Medellín</item>
@@ -52,5 +52,14 @@
     <string name="scan_dialog">Recuerda que los envases deben estar limpios antes de botarlos en los contenedores de reciclaje.</string>
     <string name="resultado">Resultado</string>
     <string name="clasificacion">Clasificación</string>
+    <string name="Divertido">Reciclar es super fácil y divertido.Separar tus residuos puede ayudar al planeta.Aqui te dejamos algunos consejos</string>
+    <string name="Ayudar_Casa">¿Cómo puedes ayudar en casa? </string>
+    <string name="Consejos_Padres">Pide a tus padres que te ayuden a separar el reciclaje en los contenedores dependiendo de su color</string>
+    <string name="Organicos">Residuos Organicos(verde):Aqui van los restos de comida y desechos de plantas o da la cocina.Por ejemplo ,cáscaras de frutas,verduras o alimentos crudos.</string>
+    <string name="Verde">Aqui van los restos de comida y desechos de plantas o da la cocina.Por ejemplo ,cáscaras de frutas,verduras o alimentos crudos.</string>
+    <string name="Reciclables">Residuos Reciclables(blanco):Aqui van los residuos que son reciclables, como los materiales que son reutilizados en nuevos productos.Como plástico,vidrio,papel y cartón.</string>
+    <string name="Blanco">Aqui van los residuos que son reciclables, como los materiales que son reutilizados en nuevos productos.Como plástico,vidrio,papel y cartón.</string>
+    <string name="No_Reciclables">Residuos no reciclables(negro):Aqui van los residuos que no tienen reutilización.Por ejemplo pañales, toallas higiénicas,papel usado,residuos contaminados con aceite o grasa, colillas de cigarrillo.</string>
+    <string name="Negro">Aqui van los residuos que no son reciclables y que no tienen reutilización.Por ejemplo pañales, toallas higiénicas,papel usado,residuos contaminados con aceite o grasa, colillas de cigarrillo ,papel higienico usado </string>
 
 </resources>

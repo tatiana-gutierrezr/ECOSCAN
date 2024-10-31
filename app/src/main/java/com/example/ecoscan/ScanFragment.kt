@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -127,25 +128,34 @@ class ScanFragment : Fragment() {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
         val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-        // Crear un TensorBuffer con la forma correcta y tipo de datos FLOAT32
-        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.FLOAT32)
+        // Crear un TensorBuffer con la forma correcta y tipo de datos UINT8
+        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.UINT8)
         inputFeature0.loadBuffer(byteBuffer)
 
+        // Procesar la imagen con el modelo
         val outputs = model.process(inputFeature0)
         val outputFeature0 = outputs.outputFeature0AsTensorBuffer
 
+        // Obtener las confidencias de las salidas del modelo
         val confidences = outputFeature0.floatArray
         val maxIndex = confidences.indices.maxByOrNull { confidences[it] } ?: -1
 
+        // Definir las etiquetas
         val labels = arrayOf("Vacio", "Persona", "Vidrio", "Plastico", "Papel", "Carton", "Aluminio", "Basura", "Organico")
         val result = labels[maxIndex]
 
+        // Log para depuración
+        Log.d("ClassifyImage", "Confidences: ${confidences.joinToString()}")
+        Log.d("ClassifyImage", "Max Index: $maxIndex")
+        Log.d("ClassifyImage", "Result: $result")
+
+        // Mostrar el resultado
         Toast.makeText(requireContext(), "Resultado: $result", Toast.LENGTH_SHORT).show()
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        // Crear un ByteBuffer del tamaño correcto para FLOAT32
-        val byteBuffer = ByteBuffer.allocateDirect(224 * 224 * 3 * 4) // 4 bytes por float
+        // Crear un ByteBuffer del tamaño correcto para UINT8
+        val byteBuffer = ByteBuffer.allocateDirect(224 * 224 * 3)
         byteBuffer.order(ByteOrder.nativeOrder())
 
         val intValues = IntArray(224 * 224)
@@ -155,15 +165,15 @@ class ScanFragment : Fragment() {
         for (i in 0 until 224) {
             for (j in 0 until 224) {
                 val value = intValues[pixel++]
-                // Normalizar los valores de los píxeles
-                val r = (value shr 16 and 0xFF) / 255.0f
-                val g = (value shr 8 and 0xFF) / 255.0f
-                val b = (value and 0xFF) / 255.0f
-                byteBuffer.putFloat(r)
-                byteBuffer.putFloat(g)
-                byteBuffer.putFloat(b)
+                byteBuffer.put((value shr 16 and 0xFF).toByte()) // Rojo
+                byteBuffer.put((value shr 8 and 0xFF).toByte())  // Verde
+                byteBuffer.put((value and 0xFF).toByte())        // Azul
             }
         }
+
+        // Log para depuración
+        Log.d("ConvertBitmap", "ByteBuffer: ${byteBuffer.array().joinToString()}")
+
         return byteBuffer
     }
 

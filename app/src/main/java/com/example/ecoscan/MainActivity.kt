@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish() // Finalizar MainActivity para que no esté en el stack
         } else {
-            // Mostrar botones de inicio de sesión y registro solo si no hay usuario autenticado
             setupAuthButtons()
         }
     }

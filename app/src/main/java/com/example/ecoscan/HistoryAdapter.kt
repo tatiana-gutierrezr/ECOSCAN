@@ -33,11 +33,11 @@ class HistoryAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: HistoryItem) {
-            binding.dateTextView.text = item.date // Asegúrate de que textViewDate exista en el binding
-            binding.resultTextView.text = item.resultTextMessage // Asegúrate de que textViewResult exista
+            binding.dateTextView.text = item.date
+            binding.resultTextView.text = item.resultTextMessage
 
             // Cargar la imagen con Picasso
-            Picasso.get().load(item.imageUrl).into(binding.imageViewItem)  // Asegúrate de que imageView esté en el binding
+            Picasso.get().load(item.imageUrl).into(binding.imageViewItem)
         }
     }
 }

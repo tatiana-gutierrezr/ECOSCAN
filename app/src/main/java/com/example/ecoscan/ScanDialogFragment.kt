@@ -1,6 +1,5 @@
 package com.example.ecoscan
 
-import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.example.ecoscan.R
 
 class ScanDialogFragment : DialogFragment() {
 
@@ -21,10 +19,8 @@ class ScanDialogFragment : DialogFragment() {
             val infoTextView = view.findViewById<TextView>(R.id.infoTextView)
             val okButton = view.findViewById<Button>(R.id.okButton)
 
-            // Set the text for the info dialog
             infoTextView.text = getString(R.string.scan_dialog)
 
-            // Close the dialog when OK button is clicked
             okButton.setOnClickListener {
             dismiss()
     }

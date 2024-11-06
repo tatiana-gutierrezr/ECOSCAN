@@ -1,6 +1,5 @@
 package com.example.ecoscan
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.example.ecoscan.databinding.FragmentProductosBinding
@@ -51,20 +49,15 @@ class ProductosFragment : Fragment() {
             binding.productosRecyclerView.addItemDecoration(customDividerDecoration)
         }
 
-        // Añadir el margen de los items (si lo necesitas)
         val itemMargin = ContactMargin()
         binding.productosRecyclerView.addItemDecoration(itemMargin)
 
-        // Establecer el borde del RecyclerView
         binding.productosRecyclerView.setBackgroundResource(R.drawable.rv_border)
 
-        // Inicializa el botón utilizando binding
         binding.backarrow.setOnClickListener {
-            // Acción al hacer clic en el botón, como volver a la pantalla anterior
-            requireActivity().onBackPressed() // Regresar a la actividad anterior
+            requireActivity().onBackPressed()
         }
 
-        // Verificar si el usuario está autenticado
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userEmail = currentUser.email?.replace(".", "_")
@@ -98,24 +91,21 @@ class ProductosFragment : Fragment() {
                         // Actualizar el adaptador
                         productoAdapter.notifyDataSetChanged()
 
-                        // Mostrar el total de productos escaneados
                         binding.totalProductosTextView.text = "Desde que creaste tu cuenta has escaneado $totalCount productos"
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        // Manejar el error
                         binding.productosRecyclerView.visibility = View.GONE
                     }
                 })
             }
         } else {
-            // Mostrar un mensaje si el usuario no está autenticado
             binding.productosRecyclerView.visibility = View.GONE
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Limpiar la referencia del binding
+        _binding = null
     }
 }

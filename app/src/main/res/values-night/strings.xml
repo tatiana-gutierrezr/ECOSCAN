@@ -35,9 +35,6 @@
     <string name="puntosrec">Puntos de reciclaje</string>
     <string name="ciudades">*Aplica solo para Bogotá y Medellín</string>
     <string name="dropdown">Selecciona una ciudad</string>
-    <string name="adolescente">Adolescentes (13 - 18 años)</string>
-    <string name="menores">Niños (0 - 12 años)</string>
-    <string name="adultos">Adultos (18+ años)</string>
     <string-array name="cities_array">
         <item>Bogotá</item>
         <item>Medellín</item>
@@ -66,6 +63,30 @@
     <string name="cantidad">Cantidad</string>
     <string name="material">Material</string>
     <string name="cant_prod">Desde que creaste tu cuenta llevas 0 productos escaneados.</string>
-    <string name="consejos">Consejos:</string>
+    <!-- Títulos -->
+    <string name="reciclaje_ninos">Reciclaje para niños</string>
+    <string name="reciclaje_adolescentes">Reciclaje para adolescentes</string>
+    <string name="reciclaje_adultos">Reciclaje para adultos</string>
+
+    <!-- Descripciones -->
+    <string name="text_ninos">¡Reciclar es fácil y divertido! 🌱\n\nReciclar significa reutilizar los materiales en lugar de tirar las cosas a la basura. Por ejemplo, puedes separar el plástico, papel y restos orgánicos en diferentes contenedores. ¡Con eso ayudas a que los materiales no terminen en los vertederos y pueden usarse para hacer nuevos productos! 🌍</string>
+    <string name="text_adolescentes">¡Actúa para cuidar el planeta! 🌎\n\nReciclar es una forma de proteger nuestro planeta. Cuando reciclamos, ayudamos a reducir la cantidad de basura que tiramos y a ahorrar recursos naturales. Como adolescente, puedes influir en otros y organizar actividades en tu colegio o comunidad para promover el reciclaje. ¡Tú también puedes hacer la diferencia! 🌿</string>
+    <string name="text_adultos">¡Haz la diferencia en tu comunidad! ♻️\n\nReciclar es una acción clave para cuidar el medio ambiente. Los adultos pueden liderar el cambio en la comunidad, organizando campañas de reciclaje, utilizando productos reciclados y comprando de manera responsable. Reciclar no solo ayuda a reducir la contaminación, sino que también conserva los recursos naturales del planeta. ¡Cada pequeño paso cuenta! 🌍</string>
+
+    <!-- Consejos -->
+    <string name="tips_general">Consejos:</string>
+
+    <string name="tips_ninos_1">1. Separa tus residuos en plástico, papel y orgánicos.</string>
+    <string name="tips_ninos_2">2. Recicla con tus amigos en casa o en el colegio.</string>
+    <string name="tips_ninos_3">3. No olvides que algunos objetos pueden ser reciclados, como botellas, cajas y cartón.</string>
+
+    <string name="tips_adolescentes_1">1. Organiza una campaña de reciclaje en tu colegio o comunidad.</string>
+    <string name="tips_adolescentes_2">2. Ayuda a tus amigos a conocer la importancia del reciclaje y cómo hacerlo bien.</string>
+    <string name="tips_adolescentes_3">3. Infórmate sobre productos reciclables y no reciclables. Esto te ayudará a tomar decisiones responsables al comprar.</string>
+
+    <string name="tips_adultos_1">1. Organiza un programa de reciclaje en tu barrio o lugar de trabajo.</string>
+    <string name="tips_adultos_2">2. Compra productos hechos de materiales reciclados para reducir la demanda de nuevos recursos.</string>
+    <string name="tips_adultos_3">3. Fomenta el reciclaje en tu familia y amigos, educando sobre qué materiales deben reciclarse y cómo hacerlo correctamente.</string>
+
 
 </resources>

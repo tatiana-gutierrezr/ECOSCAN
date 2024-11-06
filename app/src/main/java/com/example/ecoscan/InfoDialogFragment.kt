@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.example.ecoscan.R
 
 class InfoDialogFragment : DialogFragment() {
 
@@ -21,10 +20,8 @@ class InfoDialogFragment : DialogFragment() {
         val infoTextView = view.findViewById<TextView>(R.id.infoTextView)
         val okButton = view.findViewById<Button>(R.id.okButton)
 
-        // Set the text for the info dialog
         infoTextView.text = getString(R.string.info_message)
 
-        // Close the dialog when OK button is clicked
         okButton.setOnClickListener {
             dismiss()
         }
@@ -32,7 +29,6 @@ class InfoDialogFragment : DialogFragment() {
         return view
     }
 
-    // Sobrescribir para ajustar el tamaño del diálogo
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener {

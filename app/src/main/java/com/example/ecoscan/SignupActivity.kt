@@ -29,7 +29,6 @@ class SignupActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance().reference
         storageReference = FirebaseStorage.getInstance().reference
 
-        // Referencias a los elementos del layout
         profileImageView = findViewById(R.id.ImageView)
         val fullnameInput = findViewById<EditText>(R.id.fullnameInput)
         val usernameInput = findViewById<EditText>(R.id.usernameInput)
@@ -43,12 +42,10 @@ class SignupActivity : AppCompatActivity() {
             finish()
         }
 
-        // Listener para el botón de la cámara (para seleccionar una imagen)
         fab.setOnClickListener {
             chooseImage()
         }
 
-        // Listener para el botón de registro
         signupButton.setOnClickListener {
             val fullname = fullnameInput.text.toString().trim()
             val username = usernameInput.text.toString().trim()
@@ -63,23 +60,20 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // Método para seleccionar una imagen desde la galería
     private fun chooseImage() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 1001)
     }
 
-    // Manejar el resultado de la selección de imagen
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK && data != null) {
             imageUri = data.data
-            profileImageView.setImageURI(imageUri) // Muestra la imagen seleccionada en el ImageView
+            profileImageView.setImageURI(imageUri)
         }
     }
 
-    // Método para registrar el usuario
     private fun registerUser(fullname: String, username: String, email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
@@ -93,7 +87,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // Subir imagen a Firebase Storage
     private fun uploadImage(userId: String, fullname: String, username: String, email: String) {
         if (imageUri != null) {
             val fileRef = storageReference.child("profileImages/$userId.jpg")
@@ -111,9 +104,8 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // Guardar información del usuario en Firebase Realtime Database
     private fun saveUserInfo(userId: String, fullname: String, username: String, email: String, imageUrl: String?) {
-        val user = User(fullname, username, email, imageUrl) // Asegúrate de que coincida con la definición de la clase User
+        val user = User(fullname, username, email, imageUrl)
         database.child("users").child(userId).setValue(user).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this, "Registro exitoso", Toast.LENGTH_LONG).show()

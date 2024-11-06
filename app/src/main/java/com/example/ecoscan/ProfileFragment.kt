@@ -38,7 +38,6 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout para este fragmento
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
         val fullNameTextView = view.findViewById<TextView>(R.id.fullnameTextView)
@@ -50,7 +49,6 @@ class ProfileFragment : Fragment() {
         val editNameButton = view.findViewById<ImageButton>(R.id.editName)
         val fullnameInput = view.findViewById<EditText>(R.id.fullnameTextView)
 
-        // Inicializar Firebase Storage
         storageReference = FirebaseStorage.getInstance().reference
 
         // Obtener el correo electrónico del usuario actual
@@ -97,11 +95,11 @@ class ProfileFragment : Fragment() {
         }
 
         btnHistorial.setOnClickListener {
-            replaceFragment(HistoryFragment())  // Reemplaza el fragmento actual por HistoryFragment
+            replaceFragment(HistoryFragment())
         }
 
         btnProductos.setOnClickListener {
-            replaceFragment(ProductosFragment())  // Reemplaza el fragmento actual por HistoryFragment
+            replaceFragment(ProductosFragment())  // Reemplaza el fragmento actual por ProductosFragment
         }
 
         // Lógica para editar el nombre completo
@@ -138,8 +136,8 @@ class ProfileFragment : Fragment() {
 
     private fun replaceFragment(fragment: Fragment) {
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frameContainer, fragment) // Asegúrate de que 'frameContainer' esté en tu layout
-        transaction.addToBackStack(null)  // Opcional: añade a la pila de retroceso
+        transaction.replace(R.id.frameContainer, fragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 

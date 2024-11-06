@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
-    // Función para verificar el estado del usuario y cargar el fragmento adecuado
+    // Función para verificar el estado del usuario (autenticado o no) y cargar el fragmento adecuado
     private fun checkUserStatusAndLoadProfileFragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -49,20 +49,38 @@ class HomeActivity : AppCompatActivity() {
             replaceFragment(ProfileFragment())
         } else {
             // Usuario no autenticado o anónimo, cargar el perfil sin cuenta
-            replaceFragment(AnonProfileFragment()) // Fragmento sin cuenta
+            replaceFragment(AnonProfileFragment())
+        }
+    }
+
+    override fun onBackPressed() {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 0) {
+            // Si hay fragmentos en la pila de retroceso, hacer un pop
+            fragmentManager.popBackStack()
+        } else {
+            // Si no hay fragmentos en la pila de retroceso, cerrar la actividad
+            super.onBackPressed()
         }
     }
 
 
 
-    // Función para reemplazar fragmentos y controlar la visibilidad del menú inferior
     fun replaceFragment(fragment: Fragment, showBottomNav: Boolean = true) {
-        // Oculta o muestra el menú de navegación inferior
+        // Ocultar o mostrar el menú de navegación inferior
         bottomNavigationView.visibility = if (showBottomNav) View.VISIBLE else View.GONE
 
-        // Realiza la transacción de reemplazo de fragmento
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frameContainer, fragment)
-            .commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frameContainer, fragment)
+
+        // Agregar el fragmento a la pila de retroceso
+        transaction.addToBackStack(null)
+
+        transaction.commit()
     }
+
+    fun setBottomNavigationVisibility(isVisible: Boolean) {
+        bottomNavigationView.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
 }

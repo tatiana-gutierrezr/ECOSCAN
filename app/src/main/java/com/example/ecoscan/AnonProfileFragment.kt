@@ -15,12 +15,10 @@ class AnonProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_anon_profile, container, false)
-
-        // Referenciar los botones
         val btnIniciarSesion = view.findViewById<Button>(R.id.btnIniciarSesion)
         val btnCrearCuenta = view.findViewById<Button>(R.id.btnCrearCuenta)
 
-        // Establecer los listeners para los botones
+
         btnIniciarSesion.setOnClickListener {
             // Abrir la primera actividad
             val intent = Intent(activity, LoginActivity::class.java)

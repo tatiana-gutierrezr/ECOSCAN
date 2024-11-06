@@ -13,8 +13,6 @@ import com.example.ecoscan.databinding.FragmentHistoryBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storageMetadata
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +28,6 @@ class HistoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar la vista del fragmento
         val binding = FragmentHistoryBinding.inflate(inflater, container, false)
         recyclerView = binding.recyclerView2
         adapter = HistoryAdapter(requireContext(), historyItems)
@@ -51,11 +48,11 @@ class HistoryFragment : Fragment() {
             // El usuario está autenticado, cargamos los datos
             loadHistoryData(user.email ?: "")
         } else {
-            // El usuario no está autenticado, mostrar mensaje o tomar acción adecuada
+            // El usuario no está autenticado, mostrar mensaje
             Log.e("HistoryFragment", "Usuario no autenticado")
         }
 
-        btnAtras.setOnClickListener{
+        btnAtras.setOnClickListener {
             requireActivity().onBackPressed()
         }
 
@@ -66,23 +63,20 @@ class HistoryFragment : Fragment() {
         // Reemplazar los puntos en el correo para que coincida con la estructura de Firebase
         val formattedEmail = userEmail.replace(".", "_")
 
-        // Referencia a la base de datos para el usuario específico
         val databaseReference = FirebaseDatabase.getInstance().getReference("history")
         val userHistoryRef = databaseReference.child(formattedEmail)
 
-        // Leer los datos de la base de datos
         userHistoryRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = mutableListOf<HistoryItem>()
                 val imagesToLoad = mutableListOf<HistoryItem>()
 
-                // Iterar a través de los registros del usuario
                 for (dataSnapshot in snapshot.children) {
                     val historyItem = dataSnapshot.getValue(HistoryItem::class.java)
 
-                    // Filtrar registros con el mensaje de error
+                    // Filtrar registros con el mensaje de error (vacio, persona o error)
                     if (historyItem != null && historyItem.resultTextMessage != "Lo sentimos, no fue posible hacer el análisis. Por favor vuelve a intentarlo.") {
-                        // Procesamos la fecha (solo la fecha, sin la hora)
+                        // Procesamos la fecha (sin la hora)
                         val processedDate = processDate(historyItem.date)
 
                         // Creamos un nuevo item con la fecha procesada
@@ -97,7 +91,7 @@ class HistoryFragment : Fragment() {
 
                 // Si hay imágenes para cargar, obtendremos sus URLs de Firebase Storage
                 if (imagesToLoad.isNotEmpty()) {
-                    // Usamos un contador para saber cuándo todas las imágenes se hayan cargado
+                    // Usamos un contador para saber cuando todas las imágenes se hayan cargado
                     var loadedImagesCount = 0
                     for (item in imagesToLoad) {
                         val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(item.imageUrl)
@@ -107,13 +101,12 @@ class HistoryFragment : Fragment() {
                             // Asignar la URL pública (https://) al objeto
                             item.imageUrl = uri.toString()
 
-                            // Agregar el item a la lista de elementos
                             items.add(item)
                             loadedImagesCount++
 
                             // Verificar si todas las imágenes han sido cargadas
                             if (loadedImagesCount == imagesToLoad.size) {
-                                // Actualizamos el RecyclerView solo cuando todas las imágenes se hayan cargado
+                                // Actualizamos el RecyclerView solo cuando todas las imágenes se hayan cargado (por eso se demora en cargar el historial)
                                 adapter.updateList(items)
                             }
                         }.addOnFailureListener { exception ->
@@ -127,7 +120,6 @@ class HistoryFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Manejar error si ocurre
                 Log.e("HistoryFragment", "Error al cargar los datos: ${error.message}")
             }
         })
@@ -148,7 +140,7 @@ class HistoryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Restaurar el BottomNavigationView cuando se salga del MapsFragment
-        (activity as? HomeActivity)?.replaceFragment(HomeFragment())
+        // Mostrar el BottomNavigationView cuando se salga del HistoryFragment
+        (activity as? HomeActivity)?.setBottomNavigationVisibility(true)
     }
 }

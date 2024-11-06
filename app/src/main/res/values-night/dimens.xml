@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Tamaño para los íconos de los botones -->
-    <dimen name="button_icon_size">48dp</dimen>
-</resources>

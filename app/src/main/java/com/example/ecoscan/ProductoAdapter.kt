@@ -21,14 +21,12 @@ class ProductoAdapter(private val productos: Map<String, Int>) :
     }
 
     override fun onBindViewHolder(holder: ProductoViewHolder, position: Int) {
-        // Ensure position is within the bounds of the list
         val itemList = productos.entries.toList()
         if (position < itemList.size) {
             val item = itemList[position]
             holder.materialTextView.text = item.key
             holder.countTextView.text = item.value.toString()
 
-            // Apply white background color to each item
             holder.itemView.setBackgroundColor(android.graphics.Color.WHITE)
         }
     }

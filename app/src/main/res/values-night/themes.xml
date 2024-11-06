@@ -1,7 +1,34 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.ECOSCAN" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+    <!-- Base application theme -->
+    <style name="Theme.EcoScan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorPrimaryVariant">#E0E0E0</item>
+        <item name="colorOnPrimary">#000000</item>
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">#70AB55</item>
+        <item name="colorSecondaryVariant">#558B2F</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <!-- Background and surface colors -->
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#000000</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">#70AB55</item>
+        <item name="android:navigationBarColor">#000000</item>
     </style>
+
+    <!-- Splash screen theme -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Fondo para el splash, blanco en el modo claro y oscuro en el modo oscuro -->
+        <item name="android:windowBackground">@color/splashScreenBackground</item>
+    </style>
+
+    <style name="App_Custom_Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/white</item>
+    </style>
+
 </resources>

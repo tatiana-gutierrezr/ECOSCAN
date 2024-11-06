@@ -21,8 +21,13 @@
         <item name="android:navigationBarColor">#000000</item>
     </style>
 
-    <!-- Define other custom styles if needed -->
+    <!-- Splash screen theme -->
+    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Fondo para el splash, blanco en el modo claro y oscuro en el modo oscuro -->
+        <item name="android:windowBackground">@color/splashScreenBackground</item>
+    </style>
+
     <style name="App_Custom_Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/green</item>
+        <item name="android:color">@color/white</item>
     </style>
 </resources>

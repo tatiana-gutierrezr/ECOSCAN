@@ -23,7 +23,6 @@
         android:layout_marginTop="500dp"
         android:padding="30dp"
         android:lineSpacingExtra="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

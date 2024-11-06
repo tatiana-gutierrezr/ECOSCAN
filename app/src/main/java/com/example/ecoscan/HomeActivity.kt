@@ -1,6 +1,7 @@
 package com.example.ecoscan
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -48,12 +49,20 @@ class HomeActivity : AppCompatActivity() {
             replaceFragment(ProfileFragment())
         } else {
             // Usuario no autenticado o anónimo, cargar el perfil sin cuenta
-            replaceFragment(AnonProfileFragment()) // Fragmento sin cuen
+            replaceFragment(AnonProfileFragment()) // Fragmento sin cuenta
         }
     }
 
-    // Función para reemplazar fragmentos
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.frameContainer, fragment).commit()
+
+
+    // Función para reemplazar fragmentos y controlar la visibilidad del menú inferior
+    fun replaceFragment(fragment: Fragment, showBottomNav: Boolean = true) {
+        // Oculta o muestra el menú de navegación inferior
+        bottomNavigationView.visibility = if (showBottomNav) View.VISIBLE else View.GONE
+
+        // Realiza la transacción de reemplazo de fragmento
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frameContainer, fragment)
+            .commit()
     }
 }

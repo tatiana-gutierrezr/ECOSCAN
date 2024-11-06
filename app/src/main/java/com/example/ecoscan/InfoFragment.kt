@@ -1,94 +1,66 @@
 package com.example.ecoscan
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.cardview.widget.CardView
+import android.widget.TextView
+import androidx.core.widget.NestedScrollView
 
 class InfoFragment : Fragment() {
 
-    private lateinit var btnAtras: ImageButton
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout para este fragmento
-        val view = inflater.inflate(R.layout.fragment_info, container, false)
-        btnAtras = view.findViewById(R.id.backarrow)
+        // Infla el layout del fragment
+        val rootView = inflater.inflate(R.layout.fragment_info, container, false)
 
-        // Llamar a la función para configurar los botones
-        setupButtons(view)
+        // Inicialización de vistas
+        val cardNinos: CardView = rootView.findViewById(R.id.card_ninos)
+        val cardAdolescentes: CardView = rootView.findViewById(R.id.card_adolescentes)
+        val cardAdultos: CardView = rootView.findViewById(R.id.card_adultos)
 
-        btnAtras.setOnClickListener {
-            requireActivity().onBackPressed()
-        }
+        val reciclajeNinos: TextView = rootView.findViewById(R.id.reciclaje_ninos)
+        val textNinos: TextView = rootView.findViewById(R.id.text_ninos)
+        val tipsNinos: TextView = rootView.findViewById(R.id.tips_ninos)
+        val tipsNinos1: TextView = rootView.findViewById(R.id.tips_ninos_1)
+        val tipsNinos2: TextView = rootView.findViewById(R.id.tips_ninos_2)
 
-        return view
-    }
+        val reciclajeAdolescentes: TextView = rootView.findViewById(R.id.reciclaje_adolescentes)
+        val textAdolescentes: TextView = rootView.findViewById(R.id.text_adolescentes)
+        val tipsAdolescentes: TextView = rootView.findViewById(R.id.tips_adolescentes)
+        val tipsAdolescentes1: TextView = rootView.findViewById(R.id.tips_adolescentes_1)
+        val tipsAdolescentes2: TextView = rootView.findViewById(R.id.tips_adolescentes_2)
 
-    private fun resizeImage(resourceId: Int, height: Int): Bitmap {
-        // Cargar la imagen original como Bitmap
-        val originalBitmap = BitmapFactory.decodeResource(resources, resourceId)
+        val reciclajeAdultos: TextView = rootView.findViewById(R.id.reciclaje_adultos)
+        val textAdultos: TextView = rootView.findViewById(R.id.text_adultos)
+        val tipsAdultos: TextView = rootView.findViewById(R.id.tips_adultos)
+        val tipsAdultos1: TextView = rootView.findViewById(R.id.tips_adultos_1)
+        val tipsAdultos2: TextView = rootView.findViewById(R.id.tips_adultos_2)
 
-        // Calcular el nuevo ancho manteniendo la relación de aspecto
-        val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height.toFloat()
-        val newWidth = (height * aspectRatio).toInt()
+        // Establecer los textos
+        reciclajeNinos.text = getString(R.string.reciclaje_ninos)
+        textNinos.text = getString(R.string.text_ninos)
+        tipsNinos.text = getString(R.string.tips_ninos)
+        tipsNinos1.text = getString(R.string.tips_ninos_1)
+        tipsNinos2.text = getString(R.string.tips_ninos_2)
 
-        // Redimensionar la imagen
-        return Bitmap.createScaledBitmap(originalBitmap, newWidth, height, false)
-    }
+        reciclajeAdolescentes.text = getString(R.string.reciclaje_adolescentes)
+        textAdolescentes.text = getString(R.string.text_adolescentes)
+        tipsAdolescentes.text = getString(R.string.tips_adolescentes)
+        tipsAdolescentes1.text = getString(R.string.tips_adolescentes_1)
+        tipsAdolescentes2.text = getString(R.string.tips_adolescentes_2)
 
-    private fun setupButtons(view: View) {
-        val btnNino: Button = view.findViewById(R.id.btn_nino)
-        val btnAdolescente: Button = view.findViewById(R.id.btn_adolescente)
-        val btnAdulto: Button = view.findViewById(R.id.btn_adulto)
+        reciclajeAdultos.text = getString(R.string.reciclaje_adultos)
+        textAdultos.text = getString(R.string.text_adultos)
+        tipsAdultos.text = getString(R.string.tips_adultos)
+        tipsAdultos1.text = getString(R.string.tips_adultos_1)
+        tipsAdultos2.text = getString(R.string.tips_adultos_2)
 
-        // Establecer la altura deseada
-        val desiredHeight = 300 // Cambia este valor a la altura que necesites
-
-        // Redimensionar imágenes para cada botón manteniendo la relación de aspecto
-        val ninoBitmap = resizeImage(R.drawable.menor, desiredHeight)
-        val adolescenteBitmap = resizeImage(R.drawable.adolescente, desiredHeight)
-        val adultoBitmap = resizeImage(R.drawable.adulto, desiredHeight)
-
-        // Convertir Bitmap a Drawable
-        val ninoDrawable = BitmapDrawable(resources, ninoBitmap)
-        val adolescenteDrawable = BitmapDrawable(resources, adolescenteBitmap)
-        val adultoDrawable = BitmapDrawable(resources, adultoBitmap)
-
-        // Establecer las imágenes redimensionadas en los botones
-        btnNino.setCompoundDrawablesWithIntrinsicBounds(ninoDrawable, null, null, null)
-        btnAdolescente.setCompoundDrawablesWithIntrinsicBounds(adolescenteDrawable, null, null, null)
-        btnAdulto.setCompoundDrawablesWithIntrinsicBounds(adultoDrawable, null, null, null)
-
-        // Configurar el clic en los botones para abrir nuevos fragmentos
-        btnNino.setOnClickListener {
-            openFragment(InfoxEdadFragment())
-        }
-
-        btnAdolescente.setOnClickListener {
-            openFragment(InfoxEdadFragment())
-        }
-
-        btnAdulto.setOnClickListener {
-            openFragment(InfoxEdadFragment())
-        }
-    }
-
-    private fun openFragment(fragment: Fragment) {
-        val fragmentManager: FragmentManager = parentFragmentManager
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment) // Asegúrate de que R.id.fragment_container es el contenedor correcto
-        transaction.addToBackStack(null) // Permite regresar al fragmento anterior
-        transaction.commit()
+        // Devolver la vista inflada
+        return rootView
     }
 }

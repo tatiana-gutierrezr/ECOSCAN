@@ -17,6 +17,9 @@ import android.widget.ImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.ecoscan.HomeActivity
+import com.example.ecoscan.HomeFragment
+import com.example.ecoscan.InfoDialogFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,9 +30,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import kotlin.math.acos
 import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
@@ -46,10 +53,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_maps, container, false)
 
+        // Ocultar el BottomNavigationView
+        (activity as? HomeActivity)?.replaceFragment(this, showBottomNav = false)
+
         autoCompleteTextView = view.findViewById(R.id.autoCompleteTextView)
         btnAtras = view.findViewById(R.id.backarrow)
         btnInfo = view.findViewById(R.id.infoButton)
-        val floatingActionButton: FloatingActionButton = view.findViewById(R.id.floatingActionButton2)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -70,14 +79,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         firestore = FirebaseFirestore.getInstance()
-
-        floatingActionButton.setOnClickListener {
-            if (isLocationEnabled()) {
-                obtenerUbicacionYBuscarEcobotMasCercano()
-            } else {
-                mostrarDialogoUbicacionDesactivada()
-            }
-        }
 
         btnAtras.setOnClickListener {
             requireActivity().onBackPressed()
@@ -137,7 +138,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         val title = field.key
                         val value = field.value
 
-                        if (value is com.google.firebase.firestore.GeoPoint) {
+                        if (value is GeoPoint) {
                             val latLng = LatLng(value.latitude, value.longitude)
                             googleMap.addMarker(
                                 MarkerOptions().position(latLng).title(title)
@@ -161,99 +162,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    private fun mostrarDialogoUbicacionDesactivada() {
-        val builder = android.app.AlertDialog.Builder(requireContext())
-        builder.setMessage("No tienes activada la ubicación. Por favor, actívala para encontrar el ecobot más cercano.")
-            .setCancelable(false)
-            .setPositiveButton("OK", null)
-            .show()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun obtenerUbicacionYBuscarEcobotMasCercano() {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                val ubicacionActual = LatLng(location.latitude, location.longitude)
-                buscarMarcadorMasCercano(ubicacionActual)
-            } else {
-                Log.e("MapsFragment", "No se pudo obtener la ubicación actual")
-            }
-        }
-    }
-
-    private fun buscarMarcadorMasCercano(ubicacionActual: LatLng) {
-        val radioInicialKm = 1.0
-        val incrementoRadioKm = 1.0
-        val radioMaximoKm = 50.0
-
-        var radioBusqueda = radioInicialKm
-        var marcadorEncontrado: LatLng? = null
-        var nombreEcobotMasCercano: String? = null
-
-        fun buscarConRadioActual() {
-            firestore.collection("cities").get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        for (field in document.data.entries) {
-                            val title = field.key
-                            val value = field.value
-
-                            if (value is com.google.firebase.firestore.GeoPoint) {
-                                val latLng = LatLng(value.latitude, value.longitude)
-                                val distancia = calcularDistancia(ubicacionActual, latLng)
-
-                                if (distancia <= radioBusqueda) {
-                                    marcadorEncontrado = latLng
-                                    nombreEcobotMasCercano = title
-                                    break
-                                }
-                            }
-                        }
-                    }
-
-                    if (marcadorEncontrado != null && nombreEcobotMasCercano != null) {
-                        Log.d("MapsFragment", "Ecobot más cercano encontrado: $nombreEcobotMasCercano")
-                        mostrarDialogoEcobotMasCercano(nombreEcobotMasCercano!!)
-                    } else if (radioBusqueda < radioMaximoKm) {
-                        radioBusqueda += incrementoRadioKm
-                        buscarConRadioActual()
-                    } else {
-                        Log.e("MapsFragment", "No se encontraron marcadores cercanos dentro del radio máximo")
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("MapsFragment", "Error obteniendo los datos de Firestore", exception)
-                }
-        }
-
-        buscarConRadioActual()
-    }
-
-    private fun mostrarDialogoEcobotMasCercano(nombreEcobot: String) {
-        val dialogMessage = "El ecobot más cercano a tu ubicación actual se encuentra en $nombreEcobot"
-
-        val builder = android.app.AlertDialog.Builder(requireContext())
-        builder.setMessage(dialogMessage)
-            .setCancelable(false)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    private fun calcularDistancia(latLng1: LatLng, latLng2: LatLng): Double {
-        val earthRadiusKm = 6371.0
-
-        val lat1Rad = Math.toRadians(latLng1.latitude)
-        val lat2Rad = Math.toRadians(latLng2.latitude)
-        val deltaLat = Math.toRadians(latLng2.latitude - latLng1.latitude)
-        val deltaLon = Math.toRadians(latLng2.longitude - latLng1.longitude)
-
-        val a = sin(deltaLat / 2) * sin(deltaLat / 2) +
-                cos(lat1Rad) * cos(lat2Rad) *
-                sin(deltaLon / 2) * sin(deltaLon / 2)
-        val c = 2 * acos(Math.sqrt(a.coerceAtMost(1.0)))
-
-        return earthRadiusKm * c
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Restaurar el BottomNavigationView cuando se salga del MapsFragment
+        (activity as? HomeActivity)?.replaceFragment(HomeFragment())
     }
 }

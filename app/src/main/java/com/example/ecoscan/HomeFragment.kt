@@ -1,17 +1,10 @@
 package com.example.ecoscan
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import androidx.core.content.res.ResourcesCompat // Asegúrate de que este import esté presente
 import androidx.fragment.app.Fragment
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -33,14 +26,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         btnHistorial.setOnClickListener {
-            replaceFragment(HistoryFragment())  // Reemplaza el fragmento actual por HistoryFragment
+            checkUserStatusAndLoadHistoryFragment()  // Llama a la función para cargar el fragmento adecuado según el estado del usuario
         }
     }
 
+    // Función para verificar el estado del usuario y cargar el fragmento adecuado
+    private fun checkUserStatusAndLoadHistoryFragment() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null && !currentUser.isAnonymous) {
+            // Usuario autenticado, cargar el fragmento HistoryFragment
+            replaceFragment(HistoryFragment())
+        } else {
+            // Usuario no autenticado o anónimo, cargar el fragmento AnonProfileFragment
+            replaceFragment(AnonProfileFragment()) // Fragmento para usuarios sin cuenta
+        }
+    }
+
+    // Función para reemplazar el fragmento
     private fun replaceFragment(fragment: Fragment) {
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frameContainer, fragment) // Asegúrate de que 'frameContainer' esté en tu layout
-        transaction.addToBackStack(null)  // Opcional: añade a la pila de retroceso
+        transaction.addToBackStack(null)  // Opcional: añade el fragmento a la pila de retroceso para poder regresar
         transaction.commit()
     }
 }

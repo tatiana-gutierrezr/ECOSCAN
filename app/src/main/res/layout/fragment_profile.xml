@@ -43,6 +43,7 @@
         android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:editable="false"
         android:fontFamily="@font/inter_bold"
         android:hint="@string/hintuser"
         android:minHeight="48dp"

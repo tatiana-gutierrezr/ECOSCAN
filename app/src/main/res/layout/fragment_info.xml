@@ -1,85 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_marginBottom="5dp">
 
-    <ImageButton
-        android:id="@+id/backarrow"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/backbtn"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/flecha_atras"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:padding="16dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="30dp">
 
-    <Button
-        android:id="@+id/btn_nino"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginHorizontal="50dp"
-        android:background="@drawable/custom_button"
-        android:drawableLeft="@drawable/menor"
-        android:drawablePadding="16dp"
-        android:gravity="start|center_vertical"
-        android:paddingHorizontal="16dp"
-        android:text="@string/menores"
-        android:textAllCaps="false"
-        android:textColor="@color/green"
-        android:textSize="22sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btn_adolescente"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_ninos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btn_adolescente"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginHorizontal="50dp"
-        android:background="@drawable/custom_button"
-        android:drawableLeft="@drawable/adolescente"
-        android:drawablePadding="16dp"
-        android:gravity="start|center_vertical"
-        android:paddingHorizontal="16dp"
-        android:text="@string/adolescente"
-        android:textAllCaps="false"
-        android:textColor="@color/green"
-        android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_nino"
-        app:layout_constraintBottom_toTopOf="@+id/btn_adulto"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn_adulto"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginHorizontal="50dp"
-        android:background="@drawable/custom_button"
-        android:drawableLeft="@drawable/adulto"
-        android:drawablePadding="16dp"
-        android:gravity="start|center_vertical"
-        android:paddingHorizontal="16dp"
-        android:text="@string/adultos"
-        android:textAllCaps="false"
-        android:textColor="@color/green"
-        android:textSize="22sp"
-        app:layout_constraintTop_toBottomOf="@+id/btn_adolescente"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/reciclaje_ninos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reciclaje_ninos"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/darker_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/text_ninos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_ninos"
+                    android:fontFamily="@font/inter_medium"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tips_ninos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_ninos"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/green"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/tips_ninos_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_ninos_1"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+
+                <TextView
+                    android:id="@+id/tips_ninos_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_ninos_2"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_adolescentes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@+id/card_ninos"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/reciclaje_adolescentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reciclaje_adolescentes"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/darker_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/text_adolescentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_adolescentes"
+                    android:fontFamily="@font/inter_medium"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tips_adolescentes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adolescentes"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/green"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/tips_adolescentes_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adolescentes_1"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+
+                <TextView
+                    android:id="@+id/tips_adolescentes_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adolescentes_2"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_adultos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@+id/card_adolescentes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:id="@+id/reciclaje_adultos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reciclaje_adultos"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/darker_green"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/text_adultos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_adultos"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="5dp"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tips_adultos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adultos"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/green"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/tips_adultos_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adultos_1"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+
+                <TextView
+                    android:id="@+id/tips_adultos_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_adultos_2"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/green"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

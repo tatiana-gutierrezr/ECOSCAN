@@ -1,7 +1,8 @@
 package com.example.ecoscan
 
 data class HistoryItem(
-    val imageUrl: String,
-    val result: String,
-    val date: String
+    val date: String = "",
+    val resultTextMessage: String = "",
+    var imageUrl: String = "",
+    val objectLabel: String? = "",
 )

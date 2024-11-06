@@ -45,7 +45,7 @@ import java.util.Locale
 
 class ScanFragment : Fragment() {
 
-    private val MODEL_PATH = "model_unquant.tflite"
+    private val modelpath = "model_unquant.tflite"
     private lateinit var tflite: Interpreter
     private var outputSize: Int = 8
     private lateinit var previewView: PreviewView
@@ -53,8 +53,8 @@ class ScanFragment : Fragment() {
     private lateinit var galleryButton: ImageButton
     private lateinit var switchCameraButton: ImageButton
     private lateinit var imageCapture: ImageCapture
-    private val CAMERA_REQUEST_CODE = 100
-    private val GALLERY_REQUEST_CODE = 101
+    private val cameraRequestCode = 100
+    private val galleryRequestCode = 101
     private var useFrontCamera = false
 
     private lateinit var auth: FirebaseAuth
@@ -77,17 +77,17 @@ class ScanFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         storage = FirebaseStorage.getInstance()
 
-        // Mostrar el diálogo de bienvenida (siempre que se carga el fragmento)
+        // Mostrar el recordatorio (siempre que se carga el fragmento)
         showDialogMessage()
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), cameraRequestCode)
         } else {
             startCamera()
         }
 
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), GALLERY_REQUEST_CODE)
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), galleryRequestCode)
         }
 
         try {
@@ -112,17 +112,15 @@ class ScanFragment : Fragment() {
     }
 
     private fun showDialogMessage() {
-        // Inflar el layout 'fragment_scan_dialog.xml'
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_scan_dialog, null)
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .setCancelable(false)  // Para que no se pueda cerrar sin interacción
             .create()
 
-        // Configurar el botón de cierre dentro del layout
-        val closeButton = dialogView.findViewById<Button>(R.id.okButton)  // Suponiendo que el botón tiene id "closeButton"
+        val closeButton = dialogView.findViewById<Button>(R.id.okButton)
         closeButton.setOnClickListener {
-            dialog.dismiss()  // Cerrar el cuadro de diálogo cuando el usuario haga clic en el botón
+            dialog.dismiss()
         }
 
         dialog.show()
@@ -130,20 +128,20 @@ class ScanFragment : Fragment() {
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        startActivityForResult(intent, galleryRequestCode)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            GALLERY_REQUEST_CODE -> {
+            galleryRequestCode -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("ScanFragment", "Permiso de galería concedido")
                 } else {
                     Toast.makeText(requireContext(), "Permiso de galería denegado", Toast.LENGTH_SHORT).show()
                 }
             }
-            CAMERA_REQUEST_CODE -> {
+            cameraRequestCode -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startCamera()
                 } else {
@@ -155,7 +153,7 @@ class ScanFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == galleryRequestCode && resultCode == Activity.RESULT_OK && data != null) {
             val selectedImage: Uri? = data.data
             selectedImage?.let {
                 try {
@@ -170,7 +168,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun loadModelFile(): MappedByteBuffer {
-        val fileDescriptor = requireContext().assets.openFd(MODEL_PATH)
+        val fileDescriptor = requireContext().assets.openFd(modelpath)
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
@@ -283,7 +281,6 @@ class ScanFragment : Fragment() {
             else -> "Desconocido" to "Lo sentimos, no fue posible hacer el análisis. Por favor vuelve a intentarlo."
         }
 
-        // Inflar el layout 'dialog_result.xml' y mostrarlo con los resultados del escaneo
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_result, null)
 
         val resultTextView = dialogView.findViewById<TextView>(R.id.messageText)
@@ -294,10 +291,9 @@ class ScanFragment : Fragment() {
             .setCancelable(false)  // Para que no pueda cerrarse sin interacción
             .create()
 
-        // Configurar el botón de cierre dentro de 'dialog_result.xml'
-        val closeButton = dialogView.findViewById<Button>(R.id.okButton)  // Suponiendo que el botón tiene id "closeButton"
+        val closeButton = dialogView.findViewById<Button>(R.id.okButton)
         closeButton.setOnClickListener {
-            dialog.dismiss()  // Cerrar el cuadro de diálogo cuando el usuario hace clic en el botón
+            dialog.dismiss()
         }
 
         dialog.show()

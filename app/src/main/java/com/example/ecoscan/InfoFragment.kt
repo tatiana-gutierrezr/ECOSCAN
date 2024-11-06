@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.cardview.widget.CardView
 import android.widget.TextView
-import androidx.core.widget.NestedScrollView
 
 class InfoFragment : Fragment() {
 
@@ -15,10 +14,8 @@ class InfoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Infla el layout del fragment
         val rootView = inflater.inflate(R.layout.fragment_info, container, false)
 
-        // Inicialización de vistas
         val cardNinos: CardView = rootView.findViewById(R.id.card_ninos)
         val cardAdolescentes: CardView = rootView.findViewById(R.id.card_adolescentes)
         val cardAdultos: CardView = rootView.findViewById(R.id.card_adultos)
@@ -44,23 +41,22 @@ class InfoFragment : Fragment() {
         // Establecer los textos
         reciclajeNinos.text = getString(R.string.reciclaje_ninos)
         textNinos.text = getString(R.string.text_ninos)
-        tipsNinos.text = getString(R.string.tips_ninos)
+        tipsNinos.text = getString(R.string.tips_general)
         tipsNinos1.text = getString(R.string.tips_ninos_1)
         tipsNinos2.text = getString(R.string.tips_ninos_2)
 
         reciclajeAdolescentes.text = getString(R.string.reciclaje_adolescentes)
         textAdolescentes.text = getString(R.string.text_adolescentes)
-        tipsAdolescentes.text = getString(R.string.tips_adolescentes)
+        tipsAdolescentes.text = getString(R.string.tips_general)
         tipsAdolescentes1.text = getString(R.string.tips_adolescentes_1)
         tipsAdolescentes2.text = getString(R.string.tips_adolescentes_2)
 
         reciclajeAdultos.text = getString(R.string.reciclaje_adultos)
         textAdultos.text = getString(R.string.text_adultos)
-        tipsAdultos.text = getString(R.string.tips_adultos)
+        tipsAdultos.text = getString(R.string.tips_general)
         tipsAdultos1.text = getString(R.string.tips_adultos_1)
         tipsAdultos2.text = getString(R.string.tips_adultos_2)
 
-        // Devolver la vista inflada
         return rootView
     }
 }

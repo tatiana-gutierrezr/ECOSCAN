@@ -11,18 +11,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Referencias a los botones
         val btnInfo = view.findViewById<Button>(R.id.btnInfo)
         val btnUbicacion = view.findViewById<Button>(R.id.btnUbicacion)
         val btnHistorial = view.findViewById<Button>(R.id.btnHistorial)
 
-        // Configurar los listeners de clic
         btnInfo.setOnClickListener {
             replaceFragment(InfoFragment())  // Reemplaza el fragmento actual por InfoFragment
         }
 
         btnUbicacion.setOnClickListener {
-            replaceFragment(MapsFragment())  // Reemplaza el fragmento actual por LocationFragment
+            replaceFragment(MapsFragment())  // Reemplaza el fragmento actual por MapsFragment
         }
 
         btnHistorial.setOnClickListener {
@@ -39,15 +37,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             replaceFragment(HistoryFragment())
         } else {
             // Usuario no autenticado o anónimo, cargar el fragmento AnonProfileFragment
-            replaceFragment(AnonProfileFragment()) // Fragmento para usuarios sin cuenta
+            replaceFragment(AnonProfileFragment())
         }
     }
 
-    // Función para reemplazar el fragmento
     private fun replaceFragment(fragment: Fragment) {
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frameContainer, fragment) // Asegúrate de que 'frameContainer' esté en tu layout
-        transaction.addToBackStack(null)  // Opcional: añade el fragmento a la pila de retroceso para poder regresar
+        transaction.replace(R.id.frameContainer, fragment)
+        transaction.addToBackStack(null)
         transaction.commit()
     }
 }

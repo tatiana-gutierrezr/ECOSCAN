@@ -18,7 +18,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Inicializar Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         val emailInput = findViewById<EditText>(R.id.emailInput)
@@ -35,7 +34,6 @@ class LoginActivity : AppCompatActivity() {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
 
-            // Validación simple de los campos
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -45,7 +43,6 @@ class LoginActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        // Inicio de sesión exitoso, redirigir a HomeActivity
                         Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
                         // Redirigir a HomeActivity
@@ -53,14 +50,11 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish() // Finalizar LoginActivity para que el usuario no pueda volver
                     } else {
-                        // Error en la autenticación
                         Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
-        // Configurar el evento click para el TextView de olvidar contraseña
         forgotPassword.setOnClickListener {
-            // Abre la actividad de recuperación de contraseña
             val intent = Intent(this, ForgotPassActivity::class.java)
             startActivity(intent)
         }

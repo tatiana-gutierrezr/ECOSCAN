@@ -33,11 +33,9 @@ class HistoryFragment : Fragment() {
         adapter = HistoryAdapter(requireContext(), historyItems)
         recyclerView.adapter = adapter
 
-
         // Ocultar el BottomNavigationView
         (activity as? HomeActivity)?.replaceFragment(this, showBottomNav = false)
         btnAtras = binding.backarrow
-
 
         // Configuración del LayoutManager
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -66,15 +64,17 @@ class HistoryFragment : Fragment() {
         val databaseReference = FirebaseDatabase.getInstance().getReference("history")
         val userHistoryRef = databaseReference.child(formattedEmail)
 
-        userHistoryRef.addValueEventListener(object : ValueEventListener {
+        // Ordenar por fecha y limitar a los 10 más recientes
+        userHistoryRef.orderByChild("date").limitToLast(10).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = mutableListOf<HistoryItem>()
                 val imagesToLoad = mutableListOf<HistoryItem>()
 
+                // Recorrer los resultados de Firebase y filtrarlos según el mensaje
                 for (dataSnapshot in snapshot.children) {
                     val historyItem = dataSnapshot.getValue(HistoryItem::class.java)
 
-                    // Filtrar registros con el mensaje de error (vacio, persona o error)
+                    // Filtrar registros con el mensaje de error (vacío, persona o error)
                     if (historyItem != null && historyItem.resultTextMessage != "Lo sentimos, no fue posible hacer el análisis. Por favor vuelve a intentarlo.") {
                         // Procesamos la fecha (sin la hora)
                         val processedDate = processDate(historyItem.date)
@@ -85,6 +85,8 @@ class HistoryFragment : Fragment() {
                         // Verificar si la URL de la imagen es válida
                         if (newItem.imageUrl.isNotBlank()) {
                             imagesToLoad.add(newItem)
+                        } else {
+                            items.add(newItem)  // Si no tiene imagen, lo agregamos directamente
                         }
                     }
                 }
@@ -106,16 +108,20 @@ class HistoryFragment : Fragment() {
 
                             // Verificar si todas las imágenes han sido cargadas
                             if (loadedImagesCount == imagesToLoad.size) {
+                                // Ordenar los elementos por fecha de manera descendente
+                                val sortedItems = items.sortedByDescending { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it.date) }
+
                                 // Actualizamos el RecyclerView solo cuando todas las imágenes se hayan cargado (por eso se demora en cargar el historial)
-                                adapter.updateList(items)
+                                adapter.updateList(sortedItems)
                             }
                         }.addOnFailureListener { exception ->
                             Log.e("HistoryFragment", "Error al obtener la URL pública: ${exception.message}")
                         }
                     }
                 } else {
-                    // Si no hay elementos para cargar
-                    Log.e("HistoryFragment", "No hay imágenes para cargar.")
+                    // Si no hay elementos para cargar, simplemente ordenamos los existentes
+                    val sortedItems = items.sortedByDescending { SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).parse(it.date) }
+                    adapter.updateList(sortedItems)
                 }
             }
 

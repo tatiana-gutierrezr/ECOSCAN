@@ -272,7 +272,7 @@ class ScanFragment : Fragment() {
 
     private fun showResultPopup(predictedLabel: String) {
         val (objectLabel, resultTextMessage) = when (predictedLabel) {
-            "2 organic" -> "Objeto: Orgánico" to "Residuo aprovechable - contenedor verde"
+            "2 organic" -> "Objeto: Orgánico" to "Residuo orgánico aprovechable - contenedor verde"
             "3 trash" -> "Objeto: Basura" to "Residuo no aprovechable - contenedor negro"
             "4 glass" -> "Objeto: Vidrio" to "Residuo aprovechable - contenedor blanco"
             "5 paper" -> "Objeto: Papel" to "Residuo aprovechable - contenedor blanco"
@@ -301,7 +301,7 @@ class ScanFragment : Fragment() {
 
     private fun saveImageToFirebase(bitmap: Bitmap, predictedLabel: String) {
         val (objectLabel, resultTextMessage) = when (predictedLabel) {
-            "2 organic" -> "Objeto: Orgánico" to "Residuo aprovechable - contenedor verde"
+            "2 organic" -> "Objeto: Orgánico" to "Residuo orgánico aprovechable - contenedor verde"
             "3 trash" -> "Objeto: Basura" to "Residuo no aprovechable - contenedor negro"
             "4 glass" -> "Objeto: Vidrio" to "Residuo aprovechable - contenedor blanco"
             "5 paper" -> "Objeto: Papel" to "Residuo aprovechable - contenedor blanco"

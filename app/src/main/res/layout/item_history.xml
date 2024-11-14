@@ -41,19 +41,28 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"/>
 
-            <!-- TextView para el resultado -->
-            <TextView
-                android:id="@+id/resultTextView"
-                android:layout_width="wrap_content"
+            <!-- ScrollView para manejar el texto largo del resultado -->
+            <ScrollView
+                android:id="@+id/scrollViewResult"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/dateTextView"
-                android:fontFamily="@font/inter_medium"
-                android:padding="6dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:layout_alignParentBottom="true">
+
+                <!-- TextView dentro del ScrollView -->
+                <TextView
+                    android:id="@+id/resultTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:padding="6dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:scrollbars="vertical"/>
+            </ScrollView>
+
         </RelativeLayout>
 
     </LinearLayout>
